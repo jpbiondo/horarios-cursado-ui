@@ -1,7 +1,19 @@
 import { Calendar } from "lucide-react";
-import React from "react";
+import { useState } from "react";
+import WeeklySchedule from "./WeeklySchedule";
+import DailySchedule from "./DailySchedule";
 
 export default function Schedule() {
+  const [view, setView] = useState<"daily" | "weekly">("weekly");
+
+  const handleWeeklyView = () => {
+    setView("weekly");
+  };
+
+  const handleDailyView = () => {
+    setView("daily");
+  };
+
   return (
     <section className="mt-8">
       <div className="flex flex-row gap-2 items-center justify-center mb-8">
@@ -17,56 +29,21 @@ export default function Schedule() {
             name="scheduler_type_tabs"
             className="tab flex-1"
             aria-label="Diario"
+            onClick={handleDailyView}
           />
           <input
             type="radio"
             name="scheduler_type_tabs"
             className="tab flex-1"
             aria-label="Semanal"
+            onClick={handleWeeklyView}
             defaultChecked
           />
         </div>
       </div>
 
       <div className="px-8">
-        <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-          <table className="table">
-            {/* head */}
-            <thead>
-              <tr>
-                <th>Lunes</th>
-                <th>Martes</th>
-                <th>Miércoles</th>
-                <th>Jueves</th>
-                <th>Sábado</th>
-                <th>Domingo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* row 1 */}
-              <tr>
-                <th>1</th>
-                <td>Cy Ganderton</td>
-                <td>Quality Control Specialist</td>
-                <td>Blue</td>
-              </tr>
-              {/* row 2 */}
-              <tr>
-                <th>2</th>
-                <td>Hart Hagerty</td>
-                <td>Desktop Support Technician</td>
-                <td>Purple</td>
-              </tr>
-              {/* row 3 */}
-              <tr>
-                <th>3</th>
-                <td>Brice Swyre</td>
-                <td>Tax Accountant</td>
-                <td>Red</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {view === "weekly" ? <WeeklySchedule /> : <DailySchedule />}
       </div>
     </section>
   );
