@@ -21,7 +21,7 @@ export default function Schedule() {
   };
 
   return (
-    <section className="mt-8 px-8">
+    <section className="mt-8 px-8 w-full max-w-7xl">
       <div className="px-8 max-w-7xl mx-auto card bg-base-100 py-8">
         <div className="flex flex-row justify-between">
           <div className="flex flex-row gap-2 items-center justify-center mb-8">
