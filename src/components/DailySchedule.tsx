@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import { calendarEvents } from "../data/calendarEvents";
 import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
@@ -10,6 +10,14 @@ export default function DailySchedule() {
   const hours: string[] = getHours({ startHour: 8 });
 
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(format(new Date(), "HH:mm"));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="rounded-box border border-base-content/5 bg-base-100 max-w-2xl mx-auto">
