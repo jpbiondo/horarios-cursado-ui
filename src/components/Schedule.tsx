@@ -2,11 +2,10 @@ import { Calendar } from "lucide-react";
 import { useState } from "react";
 import WeeklySchedule from "./WeeklySchedule";
 import { format } from "date-fns";
-import { useToggleState } from "../hooks/useToggleState";
 import DailySchedule from "./DailySchedule";
 
 export default function Schedule() {
-  const [scheduleView, toggleView] = useState(true);
+  const [scheduleView, toggleView] = useState<"weekly" | "daily">("weekly");
 
   return (
     <section className="mt-8 px-8 w-full max-w-7xl">
@@ -15,7 +14,7 @@ export default function Schedule() {
           <div className="flex flex-row gap-2 items-center justify-center">
             <Calendar />
             <h2 className="text-2xl font-semibold text-center">
-              Calendario semanal
+              Calendario {scheduleView === "weekly" ? "Semanal" : "Diario"}
             </h2>
           </div>
 
@@ -32,20 +31,22 @@ export default function Schedule() {
                 name="scheduler_type_tabs"
                 className="tab flex-1"
                 aria-label="Diario"
-                onClick={() => toggleView(false)}
+                onClick={() => toggleView("daily")}
               />
               <input
                 type="radio"
                 name="scheduler_type_tabs"
                 className="tab flex-1"
                 aria-label="Semanal"
-                onClick={() => toggleView(true)}
+                onClick={() => toggleView("weekly")}
                 defaultChecked
               />
             </div>
           </div>
         </div>
-        <div>{scheduleView ? <WeeklySchedule /> : <DailySchedule />}</div>
+        <div>
+          {scheduleView === "weekly" ? <WeeklySchedule /> : <DailySchedule />}
+        </div>
       </div>
     </section>
   );

@@ -1,8 +1,8 @@
-import { differenceInMinutes, format, parse } from "date-fns";
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import { calendarEvents } from "../data/calendarEvents";
-import { getHours } from "../lib/utils";
+import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
 
 const hours = getHours({ startHour: 8 });
 
@@ -10,15 +10,6 @@ const todayIndex = new Date().getDay();
 
 const WeeklySchedule = () => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
-
-  const parseTime = (time: string) => parse(time, "HH:mm", new Date());
-
-  const getDurationInMinutes = (startTime: string, endTime: string) => {
-    const start = parse(startTime, "HH:mm", new Date());
-    const end = parse(endTime, "HH:mm", new Date());
-
-    return differenceInMinutes(end, start);
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {

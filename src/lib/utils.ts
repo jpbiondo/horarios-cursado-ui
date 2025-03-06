@@ -1,3 +1,4 @@
+import { differenceInMinutes, parse } from "date-fns";
 import { DAY_HOURS } from "../constants";
 
 export const getHours = ({
@@ -19,4 +20,13 @@ export const getHours = ({
     { length: Math.min(DAY_HOURS - startHour + 1, offset) },
     (_, i) => `${String((i + startHour) % DAY_HOURS).padStart(2, "0")}:00`
   );
+};
+
+export const parseTime = (time: string) => parse(time, "HH:mm", new Date());
+
+export const getDurationInMinutes = (startTime: string, endTime: string) => {
+  const start = parse(startTime, "HH:mm", new Date());
+  const end = parse(endTime, "HH:mm", new Date());
+
+  return differenceInMinutes(end, start);
 };
