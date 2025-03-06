@@ -1,0 +1,51 @@
+export const calendarEvents: CalendarEvent[] = [
+  {
+    title: "Adm. S.I.",
+    startHour: "14:30",
+    endHour: "19:00",
+    day: "Miércoles",
+    color: "blue",
+  },
+  {
+    title: "Ing. y Cal. Soft.",
+    startHour: "16:45",
+    endHour: "19:00",
+    day: "Jueves",
+    color: "red",
+  },
+  {
+    title: "Inv. Op.",
+    startHour: "16:45",
+    endHour: "19:00",
+    day: "Martes",
+    color: "green",
+  },
+  {
+    title: "Inv. Op.",
+    startHour: "15:15",
+    endHour: "19:00",
+    day: "Viernes",
+    color: "green",
+  },
+  {
+    title: "Simulación",
+    startHour: "14:30",
+    endHour: "16:45",
+    day: "Martes",
+    color: "orange",
+  },
+  {
+    title: "Simulación",
+    startHour: "14:30",
+    endHour: "16:45",
+    day: "Jueves",
+    color: "orange",
+  },
+  {
+    title: "Legislación",
+    startHour: "14:30",
+    endHour: "17:30",
+    day: "Lunes",
+    color: "lightblue",
+  },
+];

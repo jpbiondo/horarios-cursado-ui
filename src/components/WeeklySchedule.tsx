@@ -1,71 +1,10 @@
 import { differenceInMinutes, format, parse } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { WEEKDAYS } from "../constants";
+import { calendarEvents } from "../data/calendarEvents";
+import { getHours } from "../lib/utils";
 
-const days = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-const events = [
-  {
-    title: "Adm. S.I.",
-    startHour: "14:30",
-    endHour: "19:00",
-    day: "Wednesday",
-    color: "blue",
-  },
-  {
-    title: "Ing. y Cal. Soft.",
-    startHour: "16:45",
-    endHour: "19:00",
-    day: "Thursday",
-    color: "red",
-  },
-  {
-    title: "Inv. Op.",
-    startHour: "16:45",
-    endHour: "19:00",
-    day: "Tuesday",
-    color: "green",
-  },
-  {
-    title: "Inv. Op.",
-    startHour: "15:15",
-    endHour: "19:00",
-    day: "Friday",
-    color: "green",
-  },
-  {
-    title: "Simulación",
-    startHour: "14:30",
-    endHour: "16:45",
-    day: "Tuesday",
-    color: "orange",
-  },
-  {
-    title: "Simulación",
-    startHour: "14:30",
-    endHour: "16:45",
-    day: "Thursday",
-    color: "orange",
-  },
-  {
-    title: "Legislación",
-    startHour: "14:30",
-    endHour: "17:30",
-    day: "Monday",
-    color: "lightblue",
-  },
-];
-
-const hours = Array.from(
-  { length: 17 },
-  (_, i) => `${String((i + 8) % 24).padStart(2, "0")}:00`
-);
+const hours = getHours({ startHour: 8 });
 
 const todayIndex = new Date().getDay();
 
@@ -96,7 +35,7 @@ const WeeklySchedule = () => {
         <div className="border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
           Hora
         </div>
-        {days.map((day, index) => (
+        {WEEKDAYS.map((day, index) => (
           <div
             key={day}
             className={`border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100 ${
@@ -115,7 +54,7 @@ const WeeklySchedule = () => {
               {hour}
             </div>
             {/* Day columns */}
-            {days.map((day, index) => (
+            {WEEKDAYS.map((day, index) => (
               <div
                 key={day + hour}
                 className={`relative border-r border-b border-base-content/5 h-16 ${
@@ -123,7 +62,7 @@ const WeeklySchedule = () => {
                 }`}
               >
                 {/* Render event if it starts at this hour */}
-                {events
+                {calendarEvents
                   .filter(
                     (event) =>
                       event.day === day &&
