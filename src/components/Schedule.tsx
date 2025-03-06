@@ -1,49 +1,64 @@
 import { Calendar } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import FullCalendar from "@fullcalendar/react";
+import { CalendarApi } from "@fullcalendar/core/index.js";
 import WeeklySchedule from "./WeeklySchedule";
-import DailySchedule from "./DailySchedule";
+import { format } from "date-fns";
 
 export default function Schedule() {
-  const [view, setView] = useState<"daily" | "weekly">("weekly");
+  const calendarRef = useRef<FullCalendar | null>(null);
 
-  const handleWeeklyView = () => {
-    setView("weekly");
-  };
+  const changeView = (viewName: string) => {
+    if (!calendarRef.current) return;
 
-  const handleDailyView = () => {
-    setView("daily");
+    const calendarApi: CalendarApi = calendarRef.current.getApi();
+
+    if (calendarApi) {
+      calendarApi.changeView(viewName);
+    }
   };
 
   return (
-    <section className="mt-8">
-      <div className="flex flex-row gap-2 items-center justify-center mb-8">
-        <Calendar className="h-8 w-8" />
-        <h2 className="text-4xl font-bold text-center">Calendario semanal</h2>
-      </div>
+    <section className="mt-8 px-8">
+      <div className="px-8 max-w-7xl mx-auto card bg-base-100 py-8">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row gap-2 items-center justify-center mb-8">
+            <Calendar />
+            <h2 className="text-2xl font-semibold text-center">
+              Calendario semanal
+            </h2>
+          </div>
 
-      {/* name of each tab group should be unique */}
-      <div className="max-w-sm mb-8 mx-auto">
-        <div className="tabs tabs-box">
-          <input
-            type="radio"
-            name="scheduler_type_tabs"
-            className="tab flex-1"
-            aria-label="Diario"
-            onClick={handleDailyView}
-          />
-          <input
-            type="radio"
-            name="scheduler_type_tabs"
-            className="tab flex-1"
-            aria-label="Semanal"
-            onClick={handleWeeklyView}
-            defaultChecked
-          />
+          <div>
+            <span className="text-xl">
+              {format(new Date(), "MMMM dd, yyyy")}
+            </span>
+          </div>
+          {/* name of each tab group should be unique */}
+          <div className=" max-w-md font-medium">
+            <div className="tabs tabs-box">
+              <input
+                type="radio"
+                name="scheduler_type_tabs"
+                className="tab flex-1"
+                aria-label="Diario"
+                onClick={() => changeView("timeGridDay")}
+              />
+              <input
+                type="radio"
+                name="scheduler_type_tabs"
+                className="tab flex-1"
+                aria-label="Semanal"
+                onClick={() => changeView("timeGridWeek")}
+                defaultChecked
+              />
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="px-8">
-        {view === "weekly" ? <WeeklySchedule /> : <DailySchedule />}
+        <WeeklySchedule />
       </div>
     </section>
   );
