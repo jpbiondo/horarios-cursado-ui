@@ -4,10 +4,10 @@ import { calendarEvents } from "../data/calendarEvents";
 import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
 import { format } from "date-fns";
 
-const todayIndex = new Date().getDay();
+const todayIndex = new Date().getDay() - 1;
 
 export default function DailySchedule() {
-  const hours: string[] = getHours({ startHour: 8 });
+  const hours: string[] = getHours({ startHour: 14 });
 
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
 
@@ -20,13 +20,13 @@ export default function DailySchedule() {
   }, []);
 
   return (
-    <div className="rounded-box border border-base-content/5 bg-base-100 max-w-2xl mx-auto">
-      <div className="grid grid-cols-4">
+    <div className="card bg-base-100 shadow-sm">
+      <div className="grid grid-cols-7">
         {/* Table Header */}
         <div className="border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
           Hora
         </div>
-        <div className=" col-span-3 border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
+        <div className="col-span-6 border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
           Clase
         </div>
 
@@ -39,7 +39,7 @@ export default function DailySchedule() {
             </div>
             <div
               key={hour}
-              className={`relative col-span-3 border-r border-b border-base-content/5 h-16`}
+              className={`relative col-span-6 border-r border-b border-base-content/5 h-16`}
             >
               {calendarEvents
                 .filter(
