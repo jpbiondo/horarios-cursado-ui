@@ -1,16 +1,24 @@
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { WEEKDAYS } from "../constants";
-import { calendarEvents } from "../data/calendarEvents";
-import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
+import {
+  getDurationInMinutes,
+  getHours,
+  parseCarreraMateriasToEvents,
+  parseTime,
+} from "../lib/utils";
+import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
-const hours = getHours({ startHour: 14 });
+const hours = getHours({ startHour: 8 });
 
 const todayIndex = new Date().getDay() - 1;
 
-const WeeklySchedule = () => {
+interface WeeklyScheduleProps {
+  selectedMaterias?: MateriaByComisionDTO[];
+}
+const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
-
+  const calendarEvents = parseCarreraMateriasToEvents(selectedMaterias || []);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(format(new Date(), "HH:mm"));
@@ -19,18 +27,21 @@ const WeeklySchedule = () => {
     return () => clearInterval(interval);
   }, []);
 
+  console.log("Desde weekly:", calendarEvents);
   return (
-    <div className="card bg-base-100 shadow-sm">
-      <div className="grid grid-cols-7">
+    <div className="overflow-x-auto">
+      <div className="min-w-full grid grid-cols-7 border border-base-300 rounded-lg overflow-hidden">
         {/* Table Header */}
-        <div className="border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
+        <div className="border-r border-base-300 p-3 text-center font-bold bg-base-200 text-base-content">
           Hora
         </div>
         {WEEKDAYS.map((day, index) => (
           <div
             key={day}
-            className={`border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100 ${
-              index === todayIndex && "bg-gray-200"
+            className={`border-r last:border-r-0 border-base-300 p-3 text-center font-bold transition-colors ${
+              index === todayIndex
+                ? "bg-primary text-primary-content"
+                : "bg-base-200 text-base-content"
             }`}
           >
             {day}
@@ -41,15 +52,15 @@ const WeeklySchedule = () => {
         {hours.map((hour) => (
           <React.Fragment key={hour}>
             {/* Hour column */}
-            <div className="border-r border-b border-base-content/5 p-3 text-center bg-base-100 flex items-center justify-center font-semibold text-lg">
+            <div className="border-r border-b border-base-300 p-3 text-center bg-base-100 flex items-center justify-center font-semibold text-base">
               {hour}
             </div>
             {/* Day columns */}
             {WEEKDAYS.map((day, index) => (
               <div
                 key={day + hour}
-                className={`relative border-r border-b border-base-content/5 h-16 ${
-                  todayIndex === index && "bg-gray-50"
+                className={`relative border-r last:border-r-0 border-b border-base-300 h-16 transition-colors hover:bg-base-200/50 ${
+                  todayIndex === index ? "bg-base-200/30" : "bg-base-100"
                 }`}
               >
                 {/* Render event if it starts at this hour */}
@@ -66,37 +77,40 @@ const WeeklySchedule = () => {
                       getDurationInMinutes(event.startHour, event.endHour) / 60;
 
                     const colorMap: Record<string, string> = {
-                      blue: "bg-blue-500/10 border-blue-500",
-                      red: "bg-red-500/10 border-red-500",
-                      green: "bg-green-500/10 border-green-500",
-                      orange: "bg-orange-500/10 border-orange-500",
+                      blue: "bg-info/20 border-info",
+                      red: "bg-error/20 border-error text-error-content",
+                      green:
+                        "bg-success/20 border-success text-success-content",
+                      orange:
+                        "bg-warning/20 border-warning text-warning-content",
                     };
 
                     const bgClass =
-                      colorMap[event.color] || "bg-gray-500/10 border-gray-500";
+                      colorMap[event.color] ||
+                      "bg-neutral/20 border-neutral text-neutral-content";
 
                     return (
                       <div
                         key={index}
-                        className={`absolute left-1/2 -translate-x-1/2 w-11/12 text-black p-1 border ${bgClass} flex flex-col items-center justify-center z-10`}
+                        className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 border-l-4 rounded-r-md shadow-sm ${bgClass} flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow`}
                         style={{
                           top: eventStartTime.getMinutes(),
                           height: `${durationInHours * 4}rem`,
                         }}
                       >
-                        <span className="text-lg/6 font-semibold">
+                        <span className="text-sm font-semibold text-center line-clamp-2">
                           {event.title}
                         </span>
-                        <span className="text-md">{`${event.startHour}-${event.endHour} `}</span>
+                        <span className="text-xs opacity-80">{`${event.startHour}-${event.endHour}`}</span>
                       </div>
                     );
                   })}
 
-                {/* RED LINE ACROSS ALL DAYS */}
+                {/* CURRENT TIME INDICATOR */}
                 {format(parseTime(currentTime), "HH") ===
                   hour.split(":")[0] && (
                   <div
-                    className="absolute left-0 w-full h-[2px] bg-red-500 flex justify-start items-center"
+                    className="absolute left-0 w-full h-[2px] bg-error flex justify-start items-center z-20"
                     style={{
                       top: `${
                         (Number(format(parseTime(currentTime), "mm")) / 60) *
@@ -106,7 +120,7 @@ const WeeklySchedule = () => {
                   >
                     {index === 0 && (
                       <div className="flex">
-                        <div className="bg-red-500 text-white text-xs px-2 font-medium py-1 rounded-sm ml-1">
+                        <div className="badge badge-error text-error-content text-xs font-medium">
                           {currentTime}
                         </div>
                       </div>

@@ -3,10 +3,16 @@ import { WEEKDAYS } from "../constants";
 import { calendarEvents } from "../data/calendarEvents";
 import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
 import { format } from "date-fns";
+import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
 const todayIndex = new Date().getDay() - 1;
 
-export default function DailySchedule() {
+interface DailyScheduleProps {
+  selectedMaterias?: MateriaByComisionDTO[];
+}
+export default function DailySchedule({
+  selectedMaterias,
+}: DailyScheduleProps) {
   const hours: string[] = getHours({ startHour: 14 });
 
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));

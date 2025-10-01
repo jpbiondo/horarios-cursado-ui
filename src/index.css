@@ -1,5 +1,39 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark, wireframe;
+  themes: wireframe --default, light, dark --prefersdark;
+}
+
+/* Modern aesthetic enhancements */
+body {
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Smooth animations for better UX */
+* {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced card shadows for depth */
+.card {
+  border: 1px solid oklch(var(--bc) / 0.1);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states for accessibility */
+.btn:focus-visible,
+.tab:focus-visible,
+.select:focus-visible {
+  outline: 2px solid oklch(var(--p));
+  outline-offset: 2px;
+}
+
+/* Modern grid lines for calendar */
+.grid > div {
+  position: relative;
 }
