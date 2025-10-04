@@ -120,12 +120,12 @@ export default function SettingsSidebar({
   };
   return (
     <Sheet>
-      <SheetTrigger className="fixed bottom-1 right-1">
+      <SheetTrigger className="fixed bottom-1 right-1 z-20">
         <Button className="rounded-full size-12" size="icon-lg">
           <Settings className="size-8 !text-white" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px]">
+      <SheetContent className="w-[400px] sm:w-[540px]" side="left">
         <SheetHeader>
           <SheetTitle>Buscar materias</SheetTitle>
           <SheetDescription>
