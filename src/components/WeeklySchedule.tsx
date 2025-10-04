@@ -28,7 +28,6 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  console.log("Desde weekly:", calendarEvents);
   return (
     <div className="overflow-x-auto">
       <div className="min-w-full grid grid-cols-7 border border-border rounded-lg overflow-hidden">

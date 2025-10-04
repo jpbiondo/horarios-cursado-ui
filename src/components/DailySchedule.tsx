@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
 import { WEEKDAYS } from "../constants";
-import { calendarEvents } from "../data/calendarEvents";
-import { getDurationInMinutes, getHours, parseTime } from "../lib/utils";
+import {
+  getDurationInMinutes,
+  getHours,
+  parseCarreraMateriasToEvents,
+  parseTime,
+} from "../lib/utils";
 import { format } from "date-fns";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { Badge } from "./ui/badge";
 
 const todayIndex = new Date().getDay() - 1;
 
 interface DailyScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
 }
-export default function DailySchedule({
-  selectedMaterias,
-}: DailyScheduleProps) {
-  const hours: string[] = getHours({ startHour: 14 });
-
+const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
+  const hours: string[] = getHours({ startHour: 8 });
+  const calendarEvents = parseCarreraMateriasToEvents(selectedMaterias || []);
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
 
   useEffect(() => {
@@ -26,13 +29,13 @@ export default function DailySchedule({
   }, []);
 
   return (
-    <div className="card bg-base-100 shadow-sm">
-      <div className="grid grid-cols-7">
+    <div className="overflow-x-auto w-md m-auto">
+      <div className="grid grid-cols-4 border-border rounded-lg overflow-hidden">
         {/* Table Header */}
-        <div className="border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
+        <div className="border-r border-b border-border p-2 text-center font-medium bg-primary text-primary-foreground">
           Hora
         </div>
-        <div className="col-span-6 border-r border-b border-base-content/5 p-2 text-center font-bold bg-base-100">
+        <div className="col-span-3 border-r border-b border-border p-2 text-center font-medium bg-primary text-primary-foreground">
           Clase
         </div>
 
@@ -40,12 +43,12 @@ export default function DailySchedule({
         {hours.map((hour) => (
           <>
             {/* Hour column */}
-            <div className="col-span-1 border-r border-b border-base-content/5 p-3 text-center bg-base-100 flex items-center justify-center font-semibold text-lg">
+            <div className="border-r border-b border-border text-center bg-base-100 flex items-center justify-center font-semibold text-lg">
               {hour}
             </div>
             <div
               key={hour}
-              className={`relative col-span-6 border-r border-b border-base-content/5 h-16`}
+              className={`relative col-span-3 border-r border-b border-border h-10`}
             >
               {calendarEvents
                 .filter(
@@ -93,7 +96,7 @@ export default function DailySchedule({
               {/* RED LINE ACROSS ALL DAYS */}
               {format(parseTime(currentTime), "HH") === hour.split(":")[0] && (
                 <div
-                  className="absolute left-0 w-full h-[2px] bg-red-500 flex justify-start items-center"
+                  className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center"
                   style={{
                     top: `${
                       (Number(format(parseTime(currentTime), "mm")) / 60) * 100
@@ -101,9 +104,9 @@ export default function DailySchedule({
                   }}
                 >
                   <div className="flex">
-                    <div className="bg-red-500 text-white text-xs px-2 font-medium py-1 rounded-sm ml-1">
+                    <Badge variant="destructive" className="!bg-destructive/90">
                       {currentTime}
-                    </div>
+                    </Badge>
                   </div>
                 </div>
               )}
@@ -113,4 +116,6 @@ export default function DailySchedule({
       </div>
     </div>
   );
-}
+};
+
+export default DailySchedule;
