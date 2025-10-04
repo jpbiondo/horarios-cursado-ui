@@ -191,7 +191,7 @@ export default function SettingsSidebar({
                 {materiasSeleccionables.map((carreraMateria) => (
                   <Card
                     key={carreraMateria.materiaNombre}
-                    className="py-4 gap-0"
+                    className="py-4 gap-0 border-border"
                   >
                     <CardHeader className="px-4">
                       <CardTitle className="flex gap-2 items-center">

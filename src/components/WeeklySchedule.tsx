@@ -8,6 +8,7 @@ import {
   parseTime,
 } from "../lib/utils";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { Badge } from "./ui/badge";
 
 const hours = getHours({ startHour: 8 });
 
@@ -30,18 +31,18 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
   console.log("Desde weekly:", calendarEvents);
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-full grid grid-cols-7 border border-base-300 rounded-lg overflow-hidden">
+      <div className="min-w-full grid grid-cols-7 border border-border rounded-lg overflow-hidden">
         {/* Table Header */}
-        <div className="border-r border-base-300 p-3 text-center font-bold bg-base-200 text-base-content">
+        <div className="border-r border-border p-2 text-center font-medium bg-primary text-primary-foreground">
           Hora
         </div>
         {WEEKDAYS.map((day, index) => (
           <div
             key={day}
-            className={`border-r last:border-r-0 border-base-300 p-3 text-center font-bold transition-colors ${
+            className={`border-r last:border-r-0 border-border p-2 text-center font-medium transition-colors ${
               index === todayIndex
-                ? "bg-primary text-primary-content"
-                : "bg-base-200 text-base-content"
+                ? "bg-primary text-primary-foreground"
+                : "bg-primary text-primary-foreground"
             }`}
           >
             {day}
@@ -52,14 +53,14 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
         {hours.map((hour) => (
           <React.Fragment key={hour}>
             {/* Hour column */}
-            <div className="border-r border-b border-base-300 p-3 text-center bg-base-100 flex items-center justify-center font-semibold text-base">
+            <div className="border-r border-b border-border text-center bg-base-100 flex items-center justify-center font-semibold text-base">
               {hour}
             </div>
             {/* Day columns */}
             {WEEKDAYS.map((day, index) => (
               <div
                 key={day + hour}
-                className={`relative border-r last:border-r-0 border-b border-base-300 h-16 transition-colors hover:bg-base-200/50 ${
+                className={`relative border-r last:border-r-0 border-b border-border h-10 transition-colors hover:bg-base-200/50 ${
                   todayIndex === index ? "bg-base-200/30" : "bg-base-100"
                 }`}
               >
@@ -92,16 +93,16 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                     return (
                       <div
                         key={index}
-                        className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 border-l-4 rounded-r-md shadow-sm ${bgClass} flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow`}
+                        className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm bg-sky-300/20 border-1 border-sky-300 flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow`}
                         style={{
                           top: eventStartTime.getMinutes(),
                           height: `${durationInHours * 4}rem`,
                         }}
                       >
-                        <span className="text-sm font-semibold text-center line-clamp-2">
+                        <span className="text-md text-center line-clamp-2">
                           {event.title}
                         </span>
-                        <span className="text-xs opacity-80">{`${event.startHour}-${event.endHour}`}</span>
+                        <span className="text-sm text-muted-foreground">{`${event.startHour}-${event.endHour}`}</span>
                       </div>
                     );
                   })}
@@ -110,7 +111,7 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                 {format(parseTime(currentTime), "HH") ===
                   hour.split(":")[0] && (
                   <div
-                    className="absolute left-0 w-full h-[2px] bg-error flex justify-start items-center z-20"
+                    className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center z-20"
                     style={{
                       top: `${
                         (Number(format(parseTime(currentTime), "mm")) / 60) *
@@ -120,9 +121,12 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                   >
                     {index === 0 && (
                       <div className="flex">
-                        <div className="badge badge-error text-error-content text-xs font-medium">
+                        <Badge
+                          variant="destructive"
+                          className="!bg-destructive/90"
+                        >
                           {currentTime}
-                        </div>
+                        </Badge>
                       </div>
                     )}
                   </div>
