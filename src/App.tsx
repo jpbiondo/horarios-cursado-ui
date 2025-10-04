@@ -6,6 +6,13 @@ import { CarreraFindAllDTO } from "./types/CarreraFindAllDTO";
 import { ComisionFindAllDTO } from "./types/ComisionFindAllDTO";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { MateriaByComisionDTO } from "./types/MateriaByComisionDTO";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
 
 function App() {
   const [selectedCarrera, setSelectedCarrera] = useState<CarreraFindAllDTO>();
@@ -29,14 +36,20 @@ function App() {
         <Schedule selectedMaterias={selectedMaterias} />
 
         {
-          <div className="card bg-base-100 shadow-lg">
-            <div className="card-body">
+          <Card className="border-border">
+            <CardHeader>
+              <CardTitle>Materias seleccionadas</CardTitle>
+              <CardDescription>
+                Lista de materias seleccionadas mostradas en el calendario
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <SelectedMateriasList
                 selectedMaterias={selectedMaterias}
                 setSelectedMaterias={setSelectedMaterias}
               />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         }
       </main>
 
