@@ -1,5 +1,5 @@
 import { Plus, Search, Settings, Clock } from "lucide-react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCarreras } from "../../hooks/useCarreras";
 import { useComisiones } from "../../hooks/useComisiones";
 import { CarreraFindAllDTO } from "../../types/CarreraFindAllDTO";
@@ -120,9 +120,9 @@ export default function SettingsSidebar({
   };
   return (
     <Sheet>
-      <SheetTrigger>
+      <SheetTrigger className="fixed bottom-1 right-1">
         <Button className="rounded-full size-12" size="icon-lg">
-          <Settings className="size-8" />
+          <Settings className="size-8 !text-white" />
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[540px]">
