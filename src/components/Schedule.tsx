@@ -1,30 +1,34 @@
-import { useState } from "react";
 import WeeklySchedule from "./WeeklySchedule";
 import DailySchedule from "./DailySchedule";
-import ScheduleHeader from "./ScheduleHeader";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface ScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
 }
 export default function Schedule({ selectedMaterias }: ScheduleProps) {
-  const [scheduleView, toggleView] = useState<"weekly" | "daily">("weekly");
-
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <div className="card-body">
-        <ScheduleHeader
-          scheduleView={scheduleView}
-          toggleView={(view) => toggleView(view as "weekly" | "daily")}
-        />
-        <div className="mt-4">
-          {scheduleView === "weekly" ? (
-            <WeeklySchedule selectedMaterias={selectedMaterias} />
-          ) : (
-            <DailySchedule selectedMaterias={selectedMaterias} />
-          )}
+    <div>
+      <Tabs defaultValue="semanal">
+        <div className="flex justify-between mb-2">
+          <div className="flex flex-row gap-2 items-center">
+            <Calendar className="w-8 h-8" />
+            <p className="text-xl">{format(new Date(), "MMMM dd, yyyy")}</p>
+          </div>
+          <TabsList>
+            <TabsTrigger value="semanal">Semanal</TabsTrigger>
+            <TabsTrigger value="diario">Diario</TabsTrigger>
+          </TabsList>
         </div>
-      </div>
+        <TabsContent value="semanal">
+          <WeeklySchedule selectedMaterias={selectedMaterias} />
+        </TabsContent>
+        <TabsContent value="diario">
+          <DailySchedule selectedMaterias={selectedMaterias} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
