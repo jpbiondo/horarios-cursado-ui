@@ -10,6 +10,25 @@ import {
   formatCompactSchedule,
 } from "../../lib/utils";
 import { MateriaByComisionDTO } from "../../types/MateriaByComisionDTO";
+import { Button } from "./button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./sheet";
+import { Label } from "./label";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "./card";
+import { Badge } from "./badge";
 
 interface SettingsSidebarProps {
   selectedCarrera?: CarreraFindAllDTO;
@@ -50,22 +69,22 @@ export default function SettingsSidebar({
   useEffect(() => {
     if (!carreraMaterias) return;
     setMateriasSeleccionables(carreraMaterias);
+    console.log(carreraMaterias);
   }, [carreraMaterias]);
 
-  const handleChangeCarrera = (event: ChangeEvent<HTMLSelectElement>) => {
-    if (event.target.value == "default") return;
+  const handleValueChangeCarrera = (carreraValue: string) => {
+    const selectedCarreraId: number = Number(carreraValue);
 
-    const selectedCarreraId: number = Number(event.target.value);
     setSelectedCarrera(
       carreras?.filter((carrera) => carrera.id == selectedCarreraId)[0]
     );
+
     fetchComisiones(selectedCarrera?.id);
   };
 
-  const handleChangeComision = (event: ChangeEvent<HTMLSelectElement>) => {
-    if (event.target.value == "default") return;
+  const handleValueChangeComision = (comisionValue: string) => {
+    const selectedComisionNombre: string = comisionValue;
 
-    const selectedComisionNombre: string = event.target.value;
     setSelectedComision(
       comisiones?.filter(
         (comision) => comision.nombre == selectedComisionNombre
@@ -100,130 +119,115 @@ export default function SettingsSidebar({
     console.log(selectedMaterias);
   };
   return (
-    <div className="drawer drawer-start z-50">
-      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content">
-        <label
-          htmlFor="my-drawer"
-          className="btn btn-circle btn-primary drawer-button fixed bottom-6 right-6 z-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 p-1"
-        >
-          <Settings className="w-8 h-8" />
-        </label>
-      </div>
-      <div className="drawer-side">
-        <label
-          htmlFor="my-drawer"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <div className="menu bg-base-100 text-base-content min-h-full w-80 p-6">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-base-content mb-2">
-              Buscar materias
-            </h2>
-            <p className="text-base-content/70 text-sm">
-              Selecciona tu carrera y comisión para ver las materias disponibles
-            </p>
-          </div>
-          <div className="space-y-6">
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text font-medium">Carrera</span>
-              </label>
-              <select
+    <Sheet>
+      <SheetTrigger>
+        <Button className="rounded-full size-12" size="icon-lg">
+          <Settings className="size-8" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="w-[400px] sm:w-[540px]">
+        <SheetHeader>
+          <SheetTitle>Buscar materias</SheetTitle>
+          <SheetDescription>
+            Selecciona tu carrera y comisión para consultar las materias
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto px-4">
+          <div className="space-y-6 py-4">
+            <div className="grid gap-3">
+              <Label>Carrera</Label>
+              <Select
                 name="selectedCarrera"
-                defaultValue="default"
-                onChange={handleChangeCarrera}
-                className="select select-bordered w-full"
+                onValueChange={handleValueChangeCarrera}
                 disabled={loading}
               >
-                <option value="default">Seleccione una carrera</option>
-                {!loading &&
-                  carreras?.map((carrera) => (
-                    <option key={carrera.id} value={carrera.id}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccione una carrera" />
+                </SelectTrigger>
+                <SelectContent>
+                  {carreras?.map((carrera) => (
+                    <SelectItem key={carrera.id} value={String(carrera.id)}>
                       {carrera.nombre}
-                    </option>
+                    </SelectItem>
                   ))}
-              </select>
-              {loading && (
-                <span className="loading loading-spinner loading-sm mt-2"></span>
-              )}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text font-medium">Comisión</span>
-              </label>
-              <select
+            <div className="grid gap-3">
+              <Label>Comisiones</Label>
+              <Select
                 name="selectedComision"
-                onChange={handleChangeComision}
-                defaultValue="default"
-                className="select select-bordered w-full"
-                disabled={!selectedCarrera}
+                onValueChange={handleValueChangeComision}
               >
-                <option value="default">Seleccione una comisión</option>
-                {comisiones?.map((comision) => (
-                  <option key={comision.id} value={comision.nombre}>
-                    {comision.nombre}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccione una comisión" />
+                </SelectTrigger>
+                <SelectContent>
+                  {comisiones?.map((comision) => (
+                    <SelectItem key={comision.id} value={comision.nombre}>
+                      {comision.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <button
-              className="btn btn-primary w-full gap-2"
+            <Button
+              variant="default"
               disabled={!selectedCarrera || !selectedComision}
               onClick={handleClickSearch}
             >
-              <Search className="w-4 h-4" />
+              <Search />
               Buscar materias
-            </button>
+            </Button>
+
             {materiasSeleccionables && materiasSeleccionables.length > 0 && (
               <div className="space-y-3">
-                <h3 className="font-medium text-base-content/80">
+                <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
                   Materias disponibles:
                 </h3>
                 {materiasSeleccionables.map((carreraMateria) => (
-                  <div
+                  <Card
                     key={carreraMateria.materiaNombre}
-                    className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition-shadow"
+                    className="py-4 gap-0"
                   >
-                    <div className="card-body p-4">
-                      <div className="flex justify-between items-start gap-3">
-                        <div className="flex-1">
-                          <div className="mb-2">
-                            <h3 className="font-semibold text-sm text-base-content leading-tight">
-                              <span className="badge badge-outline badge-xs mr-1">
-                                {carreraMateria.comisionNombre}
-                              </span>
-                              {carreraMateria.materiaNombre}
-                            </h3>
-                          </div>
-                          <div className="flex items-start gap-1 text-xs text-base-content/70">
-                            <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                            <span className="leading-tight whitespace-pre-line">
-                              {formatCompactSchedule(carreraMateria.horarios)}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          className="btn btn-primary btn-sm btn-circle"
+                    <CardHeader className="px-4">
+                      <CardTitle className="flex gap-2 items-center">
+                        <Badge variant="outline">
+                          {carreraMateria.comisionNombre}
+                        </Badge>
+                        <span>{carreraMateria.materiaNombre}</span>
+                      </CardTitle>
+                      <CardAction>
+                        <Button
                           onClick={() =>
                             handleAddCarreraMateria(carreraMateria)
                           }
-                          title="Agregar materia"
+                          variant="default"
+                          className="rounded-full"
+                          size="icon-lg"
                         >
-                          <Plus className="h-4 w-4" />
-                        </button>
+                          <Plus />
+                        </Button>
+                      </CardAction>
+                    </CardHeader>
+                    <CardContent className="px-4">
+                      <div className="flex items-start gap-1 text-xs text-base-content/70">
+                        <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                        <span className="leading-tight whitespace-pre-line">
+                          {formatCompactSchedule(carreraMateria.horarios)}
+                        </span>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

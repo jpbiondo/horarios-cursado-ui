@@ -2,6 +2,9 @@ import { differenceInMinutes, parse } from "date-fns";
 import { DAY_HOURS } from "../constants";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export const getHours = ({
   startHour,
   offset = DAY_HOURS - startHour + 1,
@@ -95,3 +98,7 @@ export const formatCompactSchedule = (horarios: any[]): string => {
     })
     .join("; \n");
 };
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
