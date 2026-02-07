@@ -69,7 +69,6 @@ export default function SettingsSidebar({
   useEffect(() => {
     if (!carreraMaterias) return;
     setMateriasSeleccionables(carreraMaterias);
-    console.log(carreraMaterias);
   }, [carreraMaterias]);
 
   const handleValueChangeCarrera = (carreraValue: string) => {
@@ -120,9 +119,13 @@ export default function SettingsSidebar({
   };
   return (
     <Sheet>
-      <SheetTrigger className="fixed bottom-1 right-1 z-20">
-        <Button className="rounded-full size-12" size="icon-lg">
-          <Settings className="size-8 !text-white" />
+      <SheetTrigger className="fixed bottom-2 right-2 z-20">
+        <Button
+          className="rounded-full size-12"
+          variant="default"
+          size="icon-lg"
+        >
+          <Settings className="size-8" />
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[540px]" side="left">

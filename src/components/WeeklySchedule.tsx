@@ -30,18 +30,16 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-full grid grid-cols-7 border border-border rounded-lg overflow-hidden">
+      <div className="min-w-full grid grid-cols-7 border border-border overflow-hidden">
         {/* Table Header */}
-        <div className="border-r border-border p-2 text-center font-medium bg-primary text-primary-foreground">
+        <div className="border-r border-border p-2 text-center font-medium bg-secondary">
           Hora
         </div>
         {WEEKDAYS.map((day, index) => (
           <div
             key={day}
-            className={`border-r last:border-r-0 border-border p-2 text-center font-medium transition-colors ${
-              index === todayIndex
-                ? "bg-primary text-primary-foreground"
-                : "bg-primary text-primary-foreground"
+            className={`bg-secondary border-r last:border-r-0 border-border p-2 text-center font-medium transition-colors ${
+              index === todayIndex ? "text-red-600" : ""
             }`}
           >
             {day}
@@ -52,7 +50,7 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
         {hours.map((hour) => (
           <React.Fragment key={hour}>
             {/* Hour column */}
-            <div className="border-r border-b border-border text-center bg-base-100 flex items-center justify-center font-semibold text-base">
+            <div className="border-r border-b border-border text-center bg-base-100 flex items-center justify-center font-semibold text-primary/80 text-base">
               {hour}
             </div>
             {/* Day columns */}

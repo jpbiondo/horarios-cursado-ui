@@ -31,16 +31,17 @@ export default function SelectedMateriasList({
 
   if (!selectedMaterias || selectedMaterias.length === 0) {
     return (
-      <div className="text-center py-8">
+      <div className="text-center py-8 space-y-8">
         <div className="text-base-content/50 mb-2">
           <Plus className="w-12 h-12 mx-auto mb-2 opacity-50" />
         </div>
-        <h3 className="text-lg font-semibold text-base-content/70 mb-1">
+        <h3 className="text-lg font-semibold mb-1">
           No hay materias seleccionadas
         </h3>
-        <p className="text-base-content/50 text-sm">
-          Utiliza el menú lateral para buscar y agregar materias a tu horario
+        <p className="text-sm text-primary/70">
+          Cuando agregues materias al calendario se mostrarán aquí
         </p>
+        <Button size="lg">Agregar materias</Button>
       </div>
     );
   }
