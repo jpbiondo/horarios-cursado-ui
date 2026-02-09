@@ -1,0 +1,246 @@
+import { useEffect, useState } from "react";
+import { Clock, Plus, Search } from "lucide-react";
+import { useCarreras } from "../hooks/useCarreras";
+import { usePlanes } from "../hooks/usePlanes";
+import { useComisiones } from "../hooks/useComisiones";
+import { useCarreraMateriasFilteredByComision } from "../hooks/useCarreraMateriasFilteredByComision";
+import { formatCompactSchedule, haySuperposicionHorarios } from "../lib/utils";
+import { CarreraFindAllDTO } from "../types/CarreraFindAllDTO";
+import { ComisionFindAllDTO } from "../types/ComisionFindAllDTO";
+import { PlanFindAllDTO } from "../types/PlanFindAllDTO";
+import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { Button } from "./ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Label } from "./ui/label";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Badge } from "./ui/badge";
+
+export interface BuscarMateriasProps {
+  selectedMaterias?: MateriaByComisionDTO[];
+  setSelectedMaterias: React.Dispatch<
+    React.SetStateAction<MateriaByComisionDTO[] | undefined>
+  >;
+  variant?: "card" | "inline";
+}
+
+export default function BuscarMaterias({
+  selectedMaterias,
+  setSelectedMaterias,
+  variant = "card",
+}: BuscarMateriasProps) {
+  const [materiasSeleccionables, setMateriasSeleccionables] =
+    useState<MateriaByComisionDTO[]>();
+  const [selectedCarrera, setSelectedCarrera] = useState<CarreraFindAllDTO>();
+  const [selectedPlan, setSelectedPlan] = useState<PlanFindAllDTO>();
+  const [selectedComision, setSelectedComision] =
+    useState<ComisionFindAllDTO>();
+
+  const { carreras, fetchCarreras, loading } = useCarreras();
+  const { planes, fetchPlanes } = usePlanes();
+  const { comisiones, fetchComisiones } = useComisiones();
+  const { carreraMaterias, fetchCarreraMaterias } =
+    useCarreraMateriasFilteredByComision();
+
+  useEffect(() => {
+    fetchCarreras();
+  }, []);
+
+  useEffect(() => {
+    if (!carreraMaterias) return;
+    setMateriasSeleccionables(carreraMaterias);
+  }, [carreraMaterias]);
+
+  const handleValueChangeCarrera = (carreraValue: string) => {
+    const selectedCarreraId = Number(carreraValue);
+    setSelectedCarrera(
+      carreras?.filter((carrera) => carrera.id == selectedCarreraId)[0],
+    );
+    fetchPlanes(selectedCarreraId);
+  };
+
+  const handleValueChangePlan = (planValue: string) => {
+    const selectedPlanId = Number(planValue);
+    setSelectedPlan(planes?.filter((plan) => plan.id === selectedPlanId)[0]);
+    fetchComisiones(selectedPlanId);
+  };
+
+  const handleValueChangeComision = (comisionValue: string) => {
+    const selectedComisionId = Number(comisionValue);
+    setSelectedComision(
+      comisiones?.filter((comision) => comision.id == selectedComisionId)[0],
+    );
+  };
+
+  const handleClickSearch = () => {
+    if (!selectedComision) return;
+    fetchCarreraMaterias(selectedComision.id);
+  };
+
+  const handleAddCarreraMateria = (carreraMateria: MateriaByComisionDTO) => {
+    if (
+      selectedMaterias &&
+      selectedMaterias.length > 0 &&
+      haySuperposicionHorarios(carreraMateria, selectedMaterias)
+    ) {
+      console.log("HAY SUPERPOSICION BOLUDO");
+    }
+    setSelectedMaterias(
+      selectedMaterias
+        ? [...selectedMaterias, carreraMateria]
+        : [carreraMateria],
+    );
+    setMateriasSeleccionables((prev) =>
+      prev?.filter(
+        (materia) => materia.materiaNombre !== carreraMateria.materiaNombre,
+      ),
+    );
+  };
+
+  const formContent = (
+    <div className="space-y-6 py-4">
+      <div className="grid gap-3">
+        <Label>Carrera</Label>
+        <Select
+          name="selectedCarrera"
+          disabled={loading}
+          onValueChange={handleValueChangeCarrera}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccione una carrera" />
+          </SelectTrigger>
+          <SelectContent>
+            {carreras?.map((carrera) => (
+              <SelectItem key={carrera.id} value={String(carrera.id)}>
+                {carrera.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid gap-3">
+        <Label>Planes</Label>
+        <Select
+          name="selectedPlan"
+          disabled={loading}
+          onValueChange={handleValueChangePlan}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccione un plan" />
+          </SelectTrigger>
+          <SelectContent>
+            {planes?.map((plan) => (
+              <SelectItem key={plan.id} value={String(plan.id)}>
+                {plan.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid gap-3">
+        <Label>Comisiones</Label>
+        <Select
+          name="selectedComision"
+          onValueChange={handleValueChangeComision}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccione una comisión" />
+          </SelectTrigger>
+          <SelectContent>
+            {comisiones?.map((comision) => (
+              <SelectItem key={comision.id} value={String(comision.id)}>
+                {comision.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="w-full flex flex-col">
+        <Button
+          variant="default"
+          disabled={!selectedCarrera || !selectedPlan || !selectedComision}
+          onClick={handleClickSearch}
+        >
+          <Search />
+          Buscar materias
+        </Button>
+      </div>
+
+      {materiasSeleccionables && materiasSeleccionables.length > 0 && (
+        <div className="space-y-3">
+          <h3
+            className={
+              variant === "card"
+                ? "text-md font-semibold leading-none"
+                : "scroll-m-20 text-lg font-semibold tracking-tight"
+            }
+          >
+            Materias disponibles{variant === "inline" ? ":" : ""}
+          </h3>
+          {materiasSeleccionables.map((carreraMateria) => (
+            <Card
+              key={carreraMateria.materiaNombre}
+              className="py-4 gap-0 border-border"
+            >
+              <CardHeader className="px-4">
+                <CardTitle className="flex gap-2 items-center">
+                  <Badge variant="outline">
+                    {carreraMateria.comisionNombre}
+                  </Badge>
+                  <span>{carreraMateria.materiaNombre}</span>
+                </CardTitle>
+                <CardAction>
+                  <Button
+                    onClick={() => handleAddCarreraMateria(carreraMateria)}
+                    variant="default"
+                    className="rounded-full"
+                    size="icon-lg"
+                  >
+                    <Plus />
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardContent className="px-4">
+                <div className="flex items-start gap-1 text-xs text-base-content/70">
+                  <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                  <span className="leading-tight whitespace-pre-line">
+                    {formatCompactSchedule(carreraMateria.horarios)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  if (variant === "card") {
+    return (
+      <Card className="border-border rounded-none max-w-64 min-w-64 hidden lg:block">
+        <CardHeader className="px-4">
+          <CardTitle>Buscar materias</CardTitle>
+          <CardDescription>
+            Busca materias para añadir al calendario
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-4">{formContent}</CardContent>
+      </Card>
+    );
+  }
+
+  return <div className="flex-1 overflow-y-auto px-4">{formContent}</div>;
+}
