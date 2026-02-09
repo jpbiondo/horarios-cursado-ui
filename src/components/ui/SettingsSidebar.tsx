@@ -75,10 +75,10 @@ export default function SettingsSidebar({
     const selectedCarreraId: number = Number(carreraValue);
 
     setSelectedCarrera(
-      carreras?.filter((carrera) => carrera.id == selectedCarreraId)[0]
+      carreras?.filter((carrera) => carrera.id == selectedCarreraId)[0],
     );
 
-    fetchComisiones(selectedCarrera?.id);
+    fetchComisiones(selectedCarreraId);
   };
 
   const handleValueChangeComision = (comisionValue: string) => {
@@ -86,8 +86,8 @@ export default function SettingsSidebar({
 
     setSelectedComision(
       comisiones?.filter(
-        (comision) => comision.nombre == selectedComisionNombre
-      )[0]
+        (comision) => comision.nombre == selectedComisionNombre,
+      )[0],
     );
   };
 
@@ -108,15 +108,16 @@ export default function SettingsSidebar({
     setSelectedMaterias(
       selectedMaterias
         ? [...selectedMaterias, carreraMateria]
-        : [carreraMateria]
+        : [carreraMateria],
     );
 
     const materiasRestantes = materiasSeleccionables?.filter(
-      (materia) => materia.materiaNombre != carreraMateria.materiaNombre
+      (materia) => materia.materiaNombre != carreraMateria.materiaNombre,
     );
     setMateriasSeleccionables(materiasRestantes);
     console.log(selectedMaterias);
   };
+
   return (
     <Sheet>
       <SheetTrigger className="fixed bottom-2 right-2 z-20">

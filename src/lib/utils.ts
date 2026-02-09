@@ -22,7 +22,7 @@ export const getHours = ({
 
   return Array.from(
     { length: Math.min(DAY_HOURS - startHour + 1, offset) },
-    (_, i) => `${String((i + startHour) % DAY_HOURS).padStart(2, "0")}:00`
+    (_, i) => `${String((i + startHour) % DAY_HOURS).padStart(2, "0")}:00`,
   );
 };
 
@@ -36,16 +36,16 @@ export const getDurationInMinutes = (startTime: string, endTime: string) => {
 };
 
 export const parseCarreraMateriasToEvents = (
-  carreraMaterias: MateriaByComisionDTO[]
+  carreraMaterias: MateriaByComisionDTO[],
 ) => {
   let events: CalendarEvent[] = [];
   carreraMaterias.forEach((carreraMateria) => {
     carreraMateria.horarios.forEach((horario) => {
       const event: CalendarEvent = {
         title: carreraMateria.materiaNombre + carreraMateria.comisionNombre,
-        startHour: horario.horaDesde.substring(0, horario.horaDesde.length - 3),
-        endHour: horario.horaHasta.substring(0, horario.horaHasta.length - 3),
-        day: horario.dia,
+        startHour: horario.horaDesde.substring(0, 5),
+        endHour: horario.horaHasta.substring(0, 5),
+        day: mapDiaToDiaAbreviado(horario.dia),
         color: "blue",
       };
 
@@ -56,10 +56,29 @@ export const parseCarreraMateriasToEvents = (
   return events;
 };
 
+const mapDiaToDiaAbreviado = (dia: string): string => {
+  switch (dia) {
+    case "Lunes":
+      return "lun";
+    case "Martes":
+      return "mar";
+    case "Miércoles":
+      return "mié";
+    case "Jueves":
+      return "jue";
+    case "Viernes":
+      return "vie";
+    case "Sábado":
+      return "sáb";
+    default:
+      return "lun";
+  }
+};
+
 //TODO: make this work
 export const haySuperposicionHorarios = (
-  nuevaCarreraMateria: MateriaByComisionDTO,
-  carreraMateriasSeleccionadas: MateriaByComisionDTO[]
+  _nuevaCarreraMateria: MateriaByComisionDTO,
+  _carreraMateriasSeleccionadas: MateriaByComisionDTO[],
 ) => {
   return false;
 };

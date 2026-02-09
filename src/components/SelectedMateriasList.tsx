@@ -1,4 +1,4 @@
-import { Clock, Delete, Plus, Trash } from "lucide-react";
+import { Clock, Plus, Trash } from "lucide-react";
 import { formatCompactSchedule } from "../lib/utils";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import {

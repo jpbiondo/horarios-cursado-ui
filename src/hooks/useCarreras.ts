@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { CarreraFindAllDTO } from "../types/CarreraFindAllDTO";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { supabase } from "../lib/supabase";
+import type { CarreraFindAllDTO } from "../types/CarreraFindAllDTO";
 
 export const useCarreras = () => {
   const [carreras, setCarrera] = useState<CarreraFindAllDTO[]>();
@@ -10,14 +9,12 @@ export const useCarreras = () => {
 
   const fetchCarreras = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch(`${API_URL}/carrera`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const carreras = await response.json();
-      setCarrera(carreras);
-    } catch (error) {
+      const { data, error: err } = await supabase.from("carrera").select("id, nombre");
+      if (err) throw err;
+      setCarrera((data ?? []) as CarreraFindAllDTO[]);
+    } catch {
       setError("Error fetching subjects");
     } finally {
       setLoading(false);
