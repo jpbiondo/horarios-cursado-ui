@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
-  getDurationInMinutes,
+  getDurationInHours,
   getHours,
   parseCarreraMateriasToEvents,
   parseTime,
@@ -58,11 +58,10 @@ const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
               )
               .map((dailyEvent, index) => {
                 const eventStartTime = parseTime(dailyEvent.startHour);
-                const durationInHours =
-                  getDurationInMinutes(
-                    dailyEvent.startHour,
-                    dailyEvent.endHour,
-                  ) / 60;
+                const durationInHours = getDurationInHours(
+                  dailyEvent.startHour,
+                  dailyEvent.endHour,
+                );
 
                 const colorMap: Record<string, string> = {
                   blue: "bg-blue-500/10 border-blue-500",

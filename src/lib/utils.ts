@@ -28,11 +28,11 @@ export const getHours = ({
 
 export const parseTime = (time: string) => parse(time, "HH:mm", new Date());
 
-export const getDurationInMinutes = (startTime: string, endTime: string) => {
+export const getDurationInHours = (startTime: string, endTime: string) => {
   const start = parse(startTime, "HH:mm", new Date());
   const end = parse(endTime, "HH:mm", new Date());
 
-  return differenceInMinutes(end, start);
+  return differenceInMinutes(end, start) / 60;
 };
 
 export const parseCarreraMateriasToEvents = (
@@ -42,7 +42,7 @@ export const parseCarreraMateriasToEvents = (
   carreraMaterias.forEach((carreraMateria) => {
     carreraMateria.horarios.forEach((horario) => {
       const event: CalendarEvent = {
-        title: carreraMateria.materiaNombre + carreraMateria.comisionNombre,
+        title: `${carreraMateria.materiaNombre} ${carreraMateria.comisionNombre}`,
         startHour: horario.horaDesde.substring(0, 5),
         endHour: horario.horaHasta.substring(0, 5),
         day: mapDiaToDiaAbreviado(horario.dia),

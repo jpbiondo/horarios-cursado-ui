@@ -1,25 +1,56 @@
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
-  getDurationInMinutes,
+  getDurationInHours,
   getHours,
   parseCarreraMateriasToEvents,
   parseTime,
 } from "../lib/utils";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import { Badge } from "./ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const hours = getHours({ startHour: 8 });
 
-const todayIndex = new Date().getDay() - 1;
+const todayIndex = (() => {
+  const jsDay = new Date().getDay(); // 0–6, Sun–Sat
+  return (jsDay + 6) % 7; // shift so Monday=0
+})();
+
+const COLOR_MAP: Record<string, string> = {
+  blue: "bg-info/20 border-info",
+  red: "bg-error/20 border-error text-error-content",
+  green: "bg-success/20 border-success text-success-content",
+  orange: "bg-warning/20 border-warning text-warning-content",
+};
 
 interface WeeklyScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
 }
 const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
-  const calendarEvents = parseCarreraMateriasToEvents(selectedMaterias || []);
+  const calendarEvents = useMemo(
+    () => parseCarreraMateriasToEvents(selectedMaterias || []),
+    [selectedMaterias],
+  );
+
+  const eventsByDayAndHour = useMemo(() => {
+    const map = new Map<string, typeof calendarEvents>();
+    for (const event of calendarEvents) {
+      const hourKey = format(parseTime(event.startHour), "HH");
+      const key = `${event.day}-${hourKey}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(event);
+    }
+    return map;
+  }, [calendarEvents]);
+
+  const currentTimeDate = parseTime(currentTime);
+  const currentHour = format(currentTimeDate, "HH");
+  const currentMinutePercent =
+    (Number(format(currentTimeDate, "mm")) / 60) * 100;
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(format(new Date(), "HH:mm"));
@@ -61,53 +92,56 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
               }`}
             >
               {/* Render event if it starts at this hour */}
-              {calendarEvents
-                .filter(
-                  (event) =>
-                    event.day === day &&
-                    format(parseTime(event.startHour), "HH") ===
-                      hour.split(":")[0],
-                )
-                .map((event, index) => {
+              {(() => {
+                const hourKey = hour.split(":")[0];
+                const cellEvents =
+                  eventsByDayAndHour.get(`${day}-${hourKey}`) ?? [];
+                return cellEvents.map((event, index) => {
                   const eventStartTime = parseTime(event.startHour);
-                  const durationInHours =
-                    getDurationInMinutes(event.startHour, event.endHour) / 60;
+                  const durationInHours = getDurationInHours(
+                    event.startHour,
+                    event.endHour,
+                  );
 
-                  const colorMap: Record<string, string> = {
-                    blue: "bg-info/20 border-info",
-                    red: "bg-error/20 border-error text-error-content",
-                    green: "bg-success/20 border-success text-success-content",
-                    orange: "bg-warning/20 border-warning text-warning-content",
-                  };
+                  console.log(
+                    eventStartTime.getMinutes() / 60,
+                    durationInHours,
+                  );
 
                   const bgClass =
-                    colorMap[event.color] ||
+                    COLOR_MAP[event.color] ||
                     "bg-neutral/20 border-neutral text-neutral-content";
                   return (
-                    <div
-                      key={index}
-                      className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow ${bgClass}`}
-                      style={{
-                        top: eventStartTime.getMinutes(),
-                        height: `${durationInHours * 4}rem`,
-                      }}
-                    >
-                      <span className="text-md text-center line-clamp-2">
-                        {event.title}
-                      </span>
-                      <span className="text-sm text-muted-foreground">{`${event.startHour}-${event.endHour}`}</span>
-                    </div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          key={index}
+                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow ${bgClass}`}
+                          style={{
+                            top: `${(eventStartTime.getMinutes() / 60) * 2.5}rem`,
+                            height: `${durationInHours * 2.5}rem`,
+                          }}
+                        >
+                          <span className="text-sm text-center line-clamp-2">
+                            {event.title}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{`${event.startHour}-${event.endHour}`}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{event.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   );
-                })}
+                });
+              })()}
 
               {/* CURRENT TIME INDICATOR */}
-              {format(parseTime(currentTime), "HH") === hour.split(":")[0] && (
+              {currentHour === hour.split(":")[0] && (
                 <div
                   className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center z-20"
                   style={{
-                    top: `${
-                      (Number(format(parseTime(currentTime), "mm")) / 60) * 100
-                    }%`,
+                    top: `${currentMinutePercent}%`,
                   }}
                 >
                   {index === 0 && (
