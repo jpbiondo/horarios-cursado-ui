@@ -116,13 +116,11 @@ const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
               });
             })()}
             {/* RED LINE ACROSS ALL DAYS */}
-            {format(parseTime(currentTime), "HH") === hour.split(":")[0] && (
+            {currentHour === hour.split(":")[0] && (
               <div
                 className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center"
                 style={{
-                  top: `${
-                    (Number(format(parseTime(currentTime), "mm")) / 60) * 100
-                  }%`,
+                  top: `${currentMinutePercent}%`,
                 }}
               >
                 <div className="flex">
