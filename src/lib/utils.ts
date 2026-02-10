@@ -113,9 +113,9 @@ export const formatCompactSchedule = (horarios: any[]): string => {
       const day = getAbbreviatedDay(horario.dia);
       const startTime = formatTime(horario.horaDesde);
       const endTime = formatTime(horario.horaHasta);
-      return `${day} ${startTime} - ${endTime}`;
+      return `${day} ${startTime}-${endTime}`;
     })
-    .join("; \n");
+    .join("; ");
 };
 
 export function cn(...inputs: ClassValue[]) {

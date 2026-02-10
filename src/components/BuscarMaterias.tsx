@@ -110,119 +110,117 @@ export default function BuscarMaterias({
   };
 
   const formContent = (
-    <div className="space-y-6 py-4">
-      <div className="grid gap-3">
-        <Label>Carrera</Label>
-        <Select
-          name="selectedCarrera"
-          disabled={loading}
-          onValueChange={handleValueChangeCarrera}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Seleccione una carrera" />
-          </SelectTrigger>
-          <SelectContent>
-            {carreras?.map((carrera) => (
-              <SelectItem key={carrera.id} value={String(carrera.id)}>
-                {carrera.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="grid gap-3">
-        <Label>Planes</Label>
-        <Select
-          name="selectedPlan"
-          disabled={loading}
-          onValueChange={handleValueChangePlan}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Seleccione un plan" />
-          </SelectTrigger>
-          <SelectContent>
-            {planes?.map((plan) => (
-              <SelectItem key={plan.id} value={String(plan.id)}>
-                {plan.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    <div className=" py-4 space-y-6">
+      <div className="px-4 space-y-6">
+        <div className="grid gap-3">
+          <Label>Carrera</Label>
+          <Select
+            name="selectedCarrera"
+            disabled={loading}
+            onValueChange={handleValueChangeCarrera}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione una carrera" />
+            </SelectTrigger>
+            <SelectContent>
+              {carreras?.map((carrera) => (
+                <SelectItem key={carrera.id} value={String(carrera.id)}>
+                  {carrera.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid gap-3">
+          <Label>Planes</Label>
+          <Select
+            name="selectedPlan"
+            disabled={loading}
+            onValueChange={handleValueChangePlan}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione un plan" />
+            </SelectTrigger>
+            <SelectContent>
+              {planes?.map((plan) => (
+                <SelectItem key={plan.id} value={String(plan.id)}>
+                  {plan.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div className="grid gap-3">
-        <Label>Comisiones</Label>
-        <Select
-          name="selectedComision"
-          onValueChange={handleValueChangeComision}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Seleccione una comisión" />
-          </SelectTrigger>
-          <SelectContent>
-            {comisiones?.map((comision) => (
-              <SelectItem key={comision.id} value={String(comision.id)}>
-                {comision.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="w-full flex flex-col">
-        <Button
-          variant="default"
-          disabled={!selectedCarrera || !selectedPlan || !selectedComision}
-          onClick={handleClickSearch}
-        >
-          <Search />
-          Buscar materias
-        </Button>
+        <div className="grid gap-3">
+          <Label>Comisiones</Label>
+          <Select
+            name="selectedComision"
+            onValueChange={handleValueChangeComision}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione una comisión" />
+            </SelectTrigger>
+            <SelectContent>
+              {comisiones?.map((comision) => (
+                <SelectItem key={comision.id} value={String(comision.id)}>
+                  {comision.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-full flex flex-col">
+          <Button
+            variant="default"
+            disabled={!selectedCarrera || !selectedPlan || !selectedComision}
+            onClick={handleClickSearch}
+          >
+            <Search />
+            Buscar materias
+          </Button>
+        </div>
       </div>
 
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
-        <div className="space-y-3">
-          <h3
-            className={
-              variant === "card"
-                ? "text-md font-semibold leading-none"
-                : "scroll-m-20 text-lg font-semibold tracking-tight"
-            }
-          >
+        <div className="px-1">
+          <h3 className={"px-3 mb-3 text-md font-semibold leading-none"}>
             Materias disponibles{variant === "inline" ? ":" : ""}
           </h3>
-          {materiasSeleccionables.map((carreraMateria) => (
-            <Card
-              key={carreraMateria.materiaNombre}
-              className="py-4 gap-0 border-border"
-            >
-              <CardHeader className="px-4">
-                <CardTitle className="flex gap-2 items-center">
+          <div className="max-h-[230px] overflow-auto">
+            {materiasSeleccionables.map((carreraMateria) => (
+              <Card
+                key={carreraMateria.materiaNombre}
+                className="py-4 gap-0 border-border mb-3"
+              >
+                <CardHeader className="px-4">
                   <Badge variant="outline">
                     {carreraMateria.comisionNombre}
                   </Badge>
-                  <span>{carreraMateria.materiaNombre}</span>
-                </CardTitle>
-                <CardAction>
-                  <Button
-                    onClick={() => handleAddCarreraMateria(carreraMateria)}
-                    variant="default"
-                    className="rounded-full"
-                    size="icon-lg"
-                  >
-                    <Plus />
-                  </Button>
-                </CardAction>
-              </CardHeader>
-              <CardContent className="px-4">
-                <div className="flex items-start gap-1 text-xs text-base-content/70">
-                  <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                  <span className="leading-tight whitespace-pre-line">
-                    {formatCompactSchedule(carreraMateria.horarios)}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <CardTitle className="flex gap-2 items-center text-sm">
+                    <span>{carreraMateria.materiaNombre}</span>
+                  </CardTitle>
+                  <CardAction>
+                    <Button
+                      onClick={() => handleAddCarreraMateria(carreraMateria)}
+                      variant="default"
+                      className="rounded-full"
+                      size="icon-lg"
+                    >
+                      <Plus />
+                    </Button>
+                  </CardAction>
+                </CardHeader>
+                <CardContent className="px-4">
+                  <div className="flex items-start gap-1 text-xs text-base-content/70">
+                    <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                    <span className="leading-tight whitespace-pre-line">
+                      {formatCompactSchedule(carreraMateria.horarios)}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -230,14 +228,14 @@ export default function BuscarMaterias({
 
   if (variant === "card") {
     return (
-      <Card className="border-border rounded-none max-w-64 min-w-64 hidden lg:block">
+      <Card className="border-border rounded-none max-w-64 hidden lg:block">
         <CardHeader className="px-4">
           <CardTitle>Buscar materias</CardTitle>
           <CardDescription>
             Busca materias para añadir al calendario
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4">{formContent}</CardContent>
+        <CardContent className="px-0">{formContent}</CardContent>
       </Card>
     );
   }
