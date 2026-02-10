@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
   getDurationInHours,
@@ -9,16 +9,44 @@ import {
 import { format } from "date-fns";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import { Badge } from "./ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const todayIndex = new Date().getDay() - 1;
-
+const COLOR_MAP: Record<string, string> = {
+  blue: "bg-info/20 border-info",
+  red: "bg-error/20 border-error text-error-content",
+  green: "bg-success/20 border-success text-success-content",
+  orange: "bg-warning/20 border-warning text-warning-content",
+};
 interface DailyScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
 }
 const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
   const hours: string[] = getHours({ startHour: 8 });
-  const calendarEvents = parseCarreraMateriasToEvents(selectedMaterias || []);
+  const calendarEvents = useMemo(
+    () => parseCarreraMateriasToEvents(selectedMaterias || []),
+    [selectedMaterias],
+  );
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
+  const todayEvents = useMemo(
+    () => calendarEvents.filter((event) => event.day === WEEKDAYS[todayIndex]),
+    [calendarEvents],
+  );
+
+  const eventsByHour = useMemo(() => {
+    const map = new Map<string, typeof calendarEvents>();
+    for (const event of todayEvents) {
+      const hourKey = format(parseTime(event.startHour), "HH");
+      if (!map.has(hourKey)) map.set(hourKey, []);
+      map.get(hourKey)!.push(event);
+    }
+    return map;
+  }, [calendarEvents]);
+
+  const currentTimeDate = parseTime(currentTime);
+  const currentHour = format(currentTimeDate, "HH");
+  const currentMinutePercent =
+    (Number(format(currentTimeDate, "mm")) / 60) * 100;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -49,48 +77,44 @@ const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
             key={hour}
             className={`relative col-span-3 border-b border-border h-10`}
           >
-            {calendarEvents
-              .filter(
-                (event) =>
-                  event.day === WEEKDAYS[todayIndex] &&
-                  format(parseTime(event.startHour), "HH") ===
-                    hour.split(":")[0],
-              )
-              .map((dailyEvent, index) => {
-                const eventStartTime = parseTime(dailyEvent.startHour);
+            {(() => {
+              const hourKey = hour.split(":")[0];
+              const cellEvents = eventsByHour.get(hourKey) ?? [];
+              return cellEvents.map((event, index) => {
+                const eventStartTime = parseTime(event.startHour);
                 const durationInHours = getDurationInHours(
-                  dailyEvent.startHour,
-                  dailyEvent.endHour,
+                  event.startHour,
+                  event.endHour,
                 );
-
-                const colorMap: Record<string, string> = {
-                  blue: "bg-blue-500/10 border-blue-500",
-                  red: "bg-red-500/10 border-red-500",
-                  green: "bg-green-500/10 border-green-500",
-                  orange: "bg-orange-500/10 border-orange-500",
-                };
 
                 const bgClass =
-                  colorMap[dailyEvent.color] ||
-                  "bg-gray-500/10 border-gray-500";
+                  COLOR_MAP[event.color] ||
+                  "bg-neutral/20 border-neutral text-neutral-content";
 
                 return (
-                  <div
-                    key={index}
-                    className={`absolute left-1/2 -translate-x-1/2 w-11/12 text-black p-1 border ${bgClass} flex flex-col items-center justify-center z-10`}
-                    style={{
-                      top: eventStartTime.getMinutes(),
-                      height: `${durationInHours * 4}rem`,
-                    }}
-                  >
-                    <span className="text-lg/6 font-semibold">
-                      {dailyEvent.title}
-                    </span>
-                    <span className="text-md">{`${dailyEvent.startHour}-${dailyEvent.endHour} `}</span>
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        key={index}
+                        className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor ${bgClass}`}
+                        style={{
+                          top: `${(eventStartTime.getMinutes() / 60) * 2.5}rem`,
+                          height: `${durationInHours * 2.5}rem`,
+                        }}
+                      >
+                        <span className="text-sm text-center line-clamp-2">
+                          {event.title}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{`${event.startHour}-${event.endHour}`}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{event.title}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 );
-              })}
-
+              });
+            })()}
             {/* RED LINE ACROSS ALL DAYS */}
             {format(parseTime(currentTime), "HH") === hour.split(":")[0] && (
               <div

@@ -103,11 +103,6 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                     event.endHour,
                   );
 
-                  console.log(
-                    eventStartTime.getMinutes() / 60,
-                    durationInHours,
-                  );
-
                   const bgClass =
                     COLOR_MAP[event.color] ||
                     "bg-neutral/20 border-neutral text-neutral-content";
@@ -116,7 +111,7 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                       <TooltipTrigger asChild>
                         <div
                           key={index}
-                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor-pointer hover:shadow-md transition-shadow ${bgClass}`}
+                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor ${bgClass}`}
                           style={{
                             top: `${(eventStartTime.getMinutes() / 60) * 2.5}rem`,
                             height: `${durationInHours * 2.5}rem`,
