@@ -29,9 +29,9 @@ import {
 import { Badge } from "./ui/badge";
 
 export interface BuscarMateriasProps {
-  selectedMaterias?: MateriaByComisionDTO[];
+  selectedMaterias: MateriaByComisionDTO[];
   setSelectedMaterias: React.Dispatch<
-    React.SetStateAction<MateriaByComisionDTO[] | undefined>
+    React.SetStateAction<MateriaByComisionDTO[]>
   >;
   variant?: "card" | "inline";
 }

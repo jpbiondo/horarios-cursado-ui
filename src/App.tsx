@@ -7,14 +7,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import DailySchedule from "./components/DailySchedule";
 import WeeklySchedule from "./components/WeeklySchedule";
 import { Button } from "./components/ui/button";
+import SelectedMateriasList from "./components/SelectedMateriasList";
 
 function App() {
-  const [selectedMaterias, setSelectedMaterias] =
-    useState<MateriaByComisionDTO[]>();
+  const [selectedMaterias, setSelectedMaterias] = useState<
+    MateriaByComisionDTO[]
+  >([]);
 
   return (
     <div className="min-h-screen bg-base-200">
       <SettingsSidebar
+        selectedMaterias={selectedMaterias}
+        setSelectedMaterias={setSelectedMaterias}
+      />
+
+      <SelectedMateriasList
         selectedMaterias={selectedMaterias}
         setSelectedMaterias={setSelectedMaterias}
       />
@@ -38,21 +45,6 @@ function App() {
             <TabsContent value="diario">
               <DailySchedule selectedMaterias={selectedMaterias} />
             </TabsContent>
-
-            {/* <Card className="border-border rounded-none max-w-64">
-              <CardHeader className="px-4">
-                <CardTitle>Materias seleccionadas</CardTitle>
-                <CardDescription>
-                  Lista de materias seleccionadas mostradas en el calendario
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-2">
-                <SelectedMateriasList
-                  selectedMaterias={selectedMaterias}
-                  setSelectedMaterias={setSelectedMaterias}
-                />
-              </CardContent>
-            </Card> */}
 
             <BuscarMaterias
               variant="card"

@@ -12,9 +12,9 @@ import {
 import BuscarMaterias from "../BuscarMaterias";
 
 interface SettingsSidebarProps {
-  selectedMaterias?: MateriaByComisionDTO[];
+  selectedMaterias: MateriaByComisionDTO[];
   setSelectedMaterias: React.Dispatch<
-    React.SetStateAction<MateriaByComisionDTO[] | undefined>
+    React.SetStateAction<MateriaByComisionDTO[]>
   >;
 }
 
