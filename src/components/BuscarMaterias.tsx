@@ -27,6 +27,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { toast } from "sonner";
 
 export interface BuscarMateriasProps {
   selectedMaterias: MateriaByComisionDTO[];
@@ -90,12 +91,11 @@ export default function BuscarMaterias({
   };
 
   const handleAddCarreraMateria = (carreraMateria: MateriaByComisionDTO) => {
-    if (
-      selectedMaterias &&
-      selectedMaterias.length > 0 &&
-      haySuperposicionHorarios(carreraMateria, selectedMaterias)
-    ) {
-      console.log("HAY SUPERPOSICION BOLUDO");
+    if (haySuperposicionHorarios(carreraMateria, selectedMaterias)) {
+      toast.error(
+        `No se puede añadir ${carreraMateria.materiaNombre}: su horario se superpone más de 45 minutos con otras materias seleccionadas`,
+      );
+      return;
     }
     setSelectedMaterias(
       selectedMaterias

@@ -1,4 +1,4 @@
-import { differenceInMinutes, parse } from "date-fns";
+import { differenceInMinutes, isBefore, max, min, parse } from "date-fns";
 import { DAY_HOURS } from "../constants";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
@@ -28,7 +28,7 @@ export const getHours = ({
 
 export const parseTime = (time: string) => parse(time, "HH:mm", new Date());
 
-export const getDurationInHours = (startTime: string, endTime: string) => {
+export const getDifferenceInHours = (startTime: string, endTime: string) => {
   const start = parse(startTime, "HH:mm", new Date());
   const end = parse(endTime, "HH:mm", new Date());
 
@@ -75,11 +75,40 @@ const mapDiaToDiaAbreviado = (dia: string): string => {
   }
 };
 
-//TODO: make this work
+// A genuine show of love of the craft
+// Or just a shattering soul. Who cares anyway
 export const haySuperposicionHorarios = (
-  _nuevaCarreraMateria: MateriaByComisionDTO,
-  _carreraMateriasSeleccionadas: MateriaByComisionDTO[],
+  nuevaMateria: MateriaByComisionDTO,
+  materiasSeleccionadas: MateriaByComisionDTO[],
 ) => {
+  if (materiasSeleccionadas.length === 0) return false;
+
+  const horariosNuevos = nuevaMateria.horarios;
+
+  for (const horarioNuevo of horariosNuevos) {
+    const horaDesdeHNuevo = parseTime(horarioNuevo.horaDesde);
+    const horaHastaHNuevo = parseTime(horarioNuevo.horaHasta);
+
+    for (const materia of materiasSeleccionadas) {
+      for (const horarioMateria of materia.horarios) {
+        if (horarioMateria.dia !== horarioNuevo.dia) continue;
+
+        const horaDesdeHMat = parseTime(horarioMateria.horaDesde);
+        const horaHastaHMat = parseTime(horarioMateria.horaHasta);
+
+        if (
+          isBefore(horaDesdeHMat, horaHastaHNuevo) &&
+          isBefore(horaDesdeHNuevo, horaHastaHMat)
+        ) {
+          const superposicionMins = differenceInMinutes(
+            min([horaHastaHMat, horaHastaHNuevo]),
+            max([horaDesdeHMat, horaDesdeHNuevo]),
+          );
+          return superposicionMins > 45;
+        }
+      }
+    }
+  }
   return false;
 };
 

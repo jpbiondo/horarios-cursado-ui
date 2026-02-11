@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
-  getDurationInHours,
+  getDifferenceInHours,
   getHours,
   parseCarreraMateriasToEvents,
   parseTime,
@@ -98,7 +98,7 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
                   eventsByDayAndHour.get(`${day}-${hourKey}`) ?? [];
                 return cellEvents.map((event, index) => {
                   const eventStartTime = parseTime(event.startHour);
-                  const durationInHours = getDurationInHours(
+                  const durationInHours = getDifferenceInHours(
                     event.startHour,
                     event.endHour,
                   );

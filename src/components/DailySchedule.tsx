@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
-  getDurationInHours,
+  getDifferenceInHours,
   getHours,
   parseCarreraMateriasToEvents,
   parseTime,
@@ -82,7 +82,7 @@ const DailySchedule = ({ selectedMaterias }: DailyScheduleProps) => {
               const cellEvents = eventsByHour.get(hourKey) ?? [];
               return cellEvents.map((event, index) => {
                 const eventStartTime = parseTime(event.startHour);
-                const durationInHours = getDurationInHours(
+                const durationInHours = getDifferenceInHours(
                   event.startHour,
                   event.endHour,
                 );
