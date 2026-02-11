@@ -11,8 +11,6 @@ import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import { Badge } from "./ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-const hours = getHours({ startHour: 8 });
-
 const todayIndex = (() => {
   const jsDay = new Date().getDay(); // 0–6, Sun–Sat
   return (jsDay + 6) % 7; // shift so Monday=0
@@ -27,8 +25,18 @@ const COLOR_MAP: Record<string, string> = {
 
 interface WeeklyScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
+  containerRef?: React.Ref<HTMLDivElement>;
+  hideCurrentTimeIndicator?: boolean;
+  hideTodayHighlight?: boolean;
+  startHourOverride?: number;
 }
-const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
+const WeeklySchedule = ({
+  selectedMaterias,
+  containerRef,
+  hideCurrentTimeIndicator,
+  hideTodayHighlight,
+  startHourOverride,
+}: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
   const calendarEvents = useMemo(
     () => parseCarreraMateriasToEvents(selectedMaterias || []),
@@ -51,6 +59,12 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
   const currentMinutePercent =
     (Number(format(currentTimeDate, "mm")) / 60) * 100;
 
+  const effectiveStartHour = startHourOverride ?? 8;
+  const hours = useMemo(
+    () => getHours({ startHour: effectiveStartHour }),
+    [effectiveStartHour],
+  );
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(format(new Date(), "HH:mm"));
@@ -60,7 +74,10 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
   }, []);
 
   return (
-    <div className="min-w-full grid grid-cols-[repeat(7,minmax(120px,1fr))]  border border-b-0 border-border overflow-hidden">
+    <div
+      ref={containerRef}
+      className="min-w-full grid grid-cols-[repeat(7,minmax(120px,1fr))]  border border-b-0 border-border overflow-hidden"
+    >
       {/* Table Header */}
       <div className="border-r border-border p-2 text-center font-medium bg-secondary">
         Hora
@@ -69,7 +86,7 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
         <div
           key={day}
           className={`bg-secondary border-r ${index === WEEKDAYS.length - 1 && "border-r-0"} border-border p-2 text-center font-medium transition-colors ${
-            index === todayIndex ? "text-red-600" : ""
+            !hideTodayHighlight && index === todayIndex ? "text-red-600" : ""
           }`}
         >
           {day}
@@ -88,7 +105,9 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
             <div
               key={day + hour}
               className={`relative border-r ${index === WEEKDAYS.length - 1 && "border-r-0"} border-b border-border h-10 transition-colors hover:bg-base-200/50 ${
-                todayIndex === index ? "bg-base-200/30" : "bg-base-100"
+                !hideTodayHighlight && todayIndex === index
+                  ? "bg-base-200/30"
+                  : "bg-base-100"
               }`}
             >
               {/* Render event if it starts at this hour */}
@@ -132,7 +151,8 @@ const WeeklySchedule = ({ selectedMaterias }: WeeklyScheduleProps) => {
               })()}
 
               {/* CURRENT TIME INDICATOR */}
-              {currentHour === hour.split(":")[0] && (
+              {!hideCurrentTimeIndicator &&
+                currentHour === hour.split(":")[0] && (
                 <div
                   className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center z-20"
                   style={{

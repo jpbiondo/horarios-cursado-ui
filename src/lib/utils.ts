@@ -1,4 +1,11 @@
-import { differenceInMinutes, isBefore, max, min, parse } from "date-fns";
+import {
+  differenceInMinutes,
+  format,
+  isBefore,
+  max,
+  min,
+  parse,
+} from "date-fns";
 import { DAY_HOURS } from "../constants";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
@@ -127,7 +134,10 @@ const dayAbbreviations: Record<string, string> = {
 
 // Function to format time from HH:MM:SS to HH:MM
 export const formatTime = (time: string): string => {
-  return time.substring(0, time.length - 3);
+  if (time.length > 5) {
+    return time.substring(0, 5);
+  }
+  return time;
 };
 
 // Function to get abbreviated day name
@@ -150,3 +160,98 @@ export const formatCompactSchedule = (horarios: any[]): string => {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+const ICS_SEMESTER_END = new Date(2026, 5, 26, 23, 59, 59);
+
+const mapDiaToWeekdayIndex = (dia: string): number => {
+  switch (dia) {
+    case "Lunes":
+      return 1;
+    case "Martes":
+      return 2;
+    case "Miércoles":
+    case "Miercoles":
+      return 3;
+    case "Jueves":
+      return 4;
+    case "Viernes":
+      return 5;
+    case "Sábado":
+    case "Sabado":
+      return 6;
+    case "Domingo":
+      return 0;
+    default:
+      return 1;
+  }
+};
+
+const getFirstOccurrenceOnOrAfter = (
+  semesterStart: Date,
+  targetWeekday: number,
+): Date => {
+  const date = new Date(semesterStart.getTime());
+  const diff = (targetWeekday - date.getDay() + 7) % 7;
+  date.setDate(date.getDate() + diff);
+  return date;
+};
+
+const formatIcsDate = (d: Date): string => {
+  return format(d, "yyyyMMdd'T'HHmmss");
+};
+
+export const buildIcsFromMaterias = (
+  materias: MateriaByComisionDTO[],
+  semesterStart: Date,
+): string => {
+  if (!materias.length) {
+    return "";
+  }
+
+  const lines: string[] = [];
+  lines.push("BEGIN:VCALENDAR");
+  lines.push("VERSION:2.0");
+  lines.push("PRODID:-//horarios-calendario-ui//UTN Calendar//ES");
+
+  const dtStamp = formatIcsDate(new Date());
+  const until = format(ICS_SEMESTER_END, "yyyyMMdd'T'HHmmss'Z'");
+
+  materias.forEach((materia, materiaIndex) => {
+    materia.horarios.forEach((horario, horarioIndex) => {
+      const weekday = mapDiaToWeekdayIndex(horario.dia);
+      const firstDate = getFirstOccurrenceOnOrAfter(semesterStart, weekday);
+
+      const [startHourStr, startMinuteStr] = formatTime(
+        horario.horaDesde,
+      ).split(":");
+      const [endHourStr, endMinuteStr] = formatTime(horario.horaHasta).split(
+        ":",
+      );
+
+      const startDate = new Date(firstDate.getTime());
+      startDate.setHours(Number(startHourStr), Number(startMinuteStr), 0, 0);
+
+      const endDate = new Date(firstDate.getTime());
+      endDate.setHours(Number(endHourStr), Number(endMinuteStr), 0, 0);
+
+      const dtStart = formatIcsDate(startDate);
+      const dtEnd = formatIcsDate(endDate);
+
+      const uid = `materia-${materiaIndex}-${horarioIndex}@horarios-calendario-ui`;
+      const summary = `${materia.materiaNombre} ${materia.comisionNombre}`;
+
+      lines.push("BEGIN:VEVENT");
+      lines.push(`UID:${uid}`);
+      lines.push(`DTSTAMP:${dtStamp}Z`);
+      lines.push(`DTSTART:${dtStart}`);
+      lines.push(`DTEND:${dtEnd}`);
+      lines.push(`RRULE:FREQ=WEEKLY;UNTIL=${until}`);
+      lines.push(`SUMMARY:${summary}`);
+      lines.push("END:VEVENT");
+    });
+  });
+
+  lines.push("END:VCALENDAR");
+
+  return lines.join("\r\n");
+};
