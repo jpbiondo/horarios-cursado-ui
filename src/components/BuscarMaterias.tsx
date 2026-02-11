@@ -102,10 +102,20 @@ export default function BuscarMaterias({
         ? [...selectedMaterias, carreraMateria]
         : [carreraMateria],
     );
-    setMateriasSeleccionables((prev) =>
-      prev?.filter(
-        (materia) => materia.materiaNombre !== carreraMateria.materiaNombre,
-      ),
+  };
+
+  const materiaYaSeleccionada = (
+    materiaSeleccionable: MateriaByComisionDTO,
+    selectedMaterias: MateriaByComisionDTO[],
+  ) => {
+    if (selectedMaterias.length === 0) return false;
+
+    return (
+      selectedMaterias.find(
+        (materia) =>
+          materia.comisionNombre === materiaSeleccionable.comisionNombre &&
+          materia.materiaNombre === materiaSeleccionable.materiaNombre,
+      ) !== undefined
     );
   };
 
@@ -184,42 +194,55 @@ export default function BuscarMaterias({
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
         <div className="px-1">
           <h3 className={"px-3 mb-3 text-md font-semibold leading-none"}>
-            Materias disponibles{variant === "inline" ? ":" : ""}
+            Materias disponibles
           </h3>
           <div className="max-h-[230px] overflow-auto">
-            {materiasSeleccionables.map((carreraMateria) => (
-              <Card
-                key={carreraMateria.materiaNombre}
-                className="py-4 gap-0 border-border mb-3"
-              >
-                <CardHeader className="px-4">
-                  <Badge variant="outline">
-                    {carreraMateria.comisionNombre}
-                  </Badge>
-                  <CardTitle className="flex gap-2 items-center text-sm">
-                    <span>{carreraMateria.materiaNombre}</span>
-                  </CardTitle>
-                  <CardAction>
-                    <Button
-                      onClick={() => handleAddCarreraMateria(carreraMateria)}
-                      variant="default"
-                      className="rounded-full"
-                      size="icon-lg"
-                    >
-                      <Plus />
-                    </Button>
-                  </CardAction>
-                </CardHeader>
-                <CardContent className="px-4">
-                  <div className="flex items-start gap-1 text-xs text-base-content/70">
-                    <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                    <span className="leading-tight whitespace-pre-line">
-                      {formatCompactSchedule(carreraMateria.horarios)}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {materiasSeleccionables.map((carreraMateria) => {
+              const yaSeleccionada = materiaYaSeleccionada(
+                carreraMateria,
+                selectedMaterias,
+              );
+              console.log(yaSeleccionada);
+              return (
+                <Card
+                  key={carreraMateria.materiaNombre}
+                  className="py-4 gap-0 border-border mb-3 disabled"
+                >
+                  <CardHeader className="px-4">
+                    <Badge variant="outline">
+                      {carreraMateria.comisionNombre}
+                    </Badge>
+                    <CardTitle className="text-sm flex flex-col">
+                      <span>{carreraMateria.materiaNombre}</span>
+                    </CardTitle>
+                    <CardAction>
+                      <Button
+                        onClick={() => handleAddCarreraMateria(carreraMateria)}
+                        variant="default"
+                        className="rounded-full"
+                        size="icon-lg"
+                        disabled={yaSeleccionada}
+                      >
+                        <Plus />
+                      </Button>
+                    </CardAction>
+                  </CardHeader>
+                  <CardContent className="px-4">
+                    <div className="flex items-start gap-1 text-xs text-base-content/70">
+                      <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                      <span className="leading-tight whitespace-pre-line">
+                        {formatCompactSchedule(carreraMateria.horarios)}
+                      </span>
+                    </div>
+                    {yaSeleccionada && (
+                      <span className="text-xs text-muted-foreground italic">
+                        Ya seleccionada
+                      </span>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}
