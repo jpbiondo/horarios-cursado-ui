@@ -46,10 +46,16 @@ export const useMateriasSeleccionadas = () => {
     },
     [],
   );
+
+  const deleteAllMateriasSeleccionadas = useCallback(() => {
+    setMateriasSeleccionadas([]);
+    localStorage.setItem(MATERIAS_GUARDADAS_KEY, "[]");
+  }, []);
   return {
     materiasSeleccionadas,
     setMateriasSeleccionadas,
     pushToMateriasSeleccionadas,
     popFromMateriasSeleccionadas,
+    deleteAllMateriasSeleccionadas,
   };
 };

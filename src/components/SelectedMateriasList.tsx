@@ -1,17 +1,24 @@
-import { X } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 
 interface SelectedMateriaListProps {
   selectedMaterias: MateriaByComisionDTO[];
   popFromMateriasSeleccionadas: (materia: MateriaByComisionDTO) => void;
+  deleteAllMateriasSeleccionadas: () => void;
 }
 export default function SelectedMateriasList({
   selectedMaterias,
   popFromMateriasSeleccionadas,
+  deleteAllMateriasSeleccionadas,
 }: SelectedMateriaListProps) {
   const handleDeleteMateria = (materia: MateriaByComisionDTO) => {
     popFromMateriasSeleccionadas(materia);
+  };
+
+  const handleDeleteAllMaterias = () => {
+    deleteAllMateriasSeleccionadas();
   };
 
   return (
@@ -39,6 +46,12 @@ export default function SelectedMateriasList({
             </span>
           </Badge>
         ))
+      )}
+      {selectedMaterias.length > 0 && (
+        <Button variant="destructive" onClick={handleDeleteAllMaterias}>
+          <Trash />
+          Eliminar todo
+        </Button>
       )}
     </div>
   );

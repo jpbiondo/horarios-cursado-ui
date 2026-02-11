@@ -24,6 +24,7 @@ function App() {
     materiasSeleccionadas,
     pushToMateriasSeleccionadas,
     popFromMateriasSeleccionadas,
+    deleteAllMateriasSeleccionadas,
   } = useMateriasSeleccionadas();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
 
@@ -97,6 +98,7 @@ function App() {
       <SelectedMateriasList
         selectedMaterias={materiasSeleccionadas}
         popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
+        deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
       />
 
       <main className="container mx-auto p-4 space-y-6 max-w-6xl">
