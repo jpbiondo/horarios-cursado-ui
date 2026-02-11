@@ -10,6 +10,14 @@ import { Button } from "./components/ui/button";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { buildIcsFromMaterias } from "./lib/utils";
+import { ButtonGroup } from "./components/ui/button-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./components/ui/dropdown-menu";
+import { ArrowDown, CalendarIcon, ImageIcon } from "lucide-react";
 
 function App() {
   const [selectedMaterias, setSelectedMaterias] = useState<
@@ -94,30 +102,41 @@ function App() {
               <TabsTrigger value="diario">Diario</TabsTrigger>
             </TabsList>
             <div className="flex items-center gap-2">
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={handleExportPng}
-                disabled={!hasSelectedMaterias}
-              >
-                PNG
-              </Button>
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={handleExportIcs}
-                disabled={!hasSelectedMaterias}
-              >
-                ICS
-              </Button>
+              <ButtonGroup>
+                <Button
+                  disabled={!hasSelectedMaterias}
+                  onClick={handleExportPng}
+                >
+                  Exportar
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      aria-label="Export options"
+                      disabled={!hasSelectedMaterias}
+                    >
+                      <ArrowDown />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleExportPng}>
+                      <ImageIcon />
+                      PNG
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleExportIcs}>
+                      <CalendarIcon />
+                      ICS
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </ButtonGroup>
             </div>
           </div>
 
           <div className="flex flex-row gap-2 overflow-x-auto">
             <TabsContent value="semanal">
-              <WeeklySchedule
-                selectedMaterias={selectedMaterias}
-              />
+              <WeeklySchedule selectedMaterias={selectedMaterias} />
             </TabsContent>
             <TabsContent value="diario">
               <DailySchedule selectedMaterias={selectedMaterias} />
