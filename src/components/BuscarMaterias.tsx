@@ -31,15 +31,13 @@ import { toast } from "sonner";
 
 export interface BuscarMateriasProps {
   selectedMaterias: MateriaByComisionDTO[];
-  setSelectedMaterias: React.Dispatch<
-    React.SetStateAction<MateriaByComisionDTO[]>
-  >;
+  pushToMateriasSeleccionadas: (nuevaMateria: MateriaByComisionDTO) => void;
   variant?: "card" | "inline";
 }
 
 export default function BuscarMaterias({
   selectedMaterias,
-  setSelectedMaterias,
+  pushToMateriasSeleccionadas,
   variant = "card",
 }: BuscarMateriasProps) {
   const [materiasSeleccionables, setMateriasSeleccionables] =
@@ -97,11 +95,7 @@ export default function BuscarMaterias({
       );
       return;
     }
-    setSelectedMaterias(
-      selectedMaterias
-        ? [...selectedMaterias, carreraMateria]
-        : [carreraMateria],
-    );
+    pushToMateriasSeleccionadas(carreraMateria);
   };
 
   const materiaYaSeleccionada = (

@@ -4,23 +4,14 @@ import { Badge } from "./ui/badge";
 
 interface SelectedMateriaListProps {
   selectedMaterias: MateriaByComisionDTO[];
-  setSelectedMaterias: React.Dispatch<
-    React.SetStateAction<MateriaByComisionDTO[]>
-  >;
+  popFromMateriasSeleccionadas: (materia: MateriaByComisionDTO) => void;
 }
 export default function SelectedMateriasList({
   selectedMaterias,
-  setSelectedMaterias,
+  popFromMateriasSeleccionadas,
 }: SelectedMateriaListProps) {
   const handleDeleteMateria = (materia: MateriaByComisionDTO) => {
-    console.log(materia);
-    const newSelectedMaterias = selectedMaterias.filter((m) => {
-      return (
-        m.comisionNombre !== materia.comisionNombre ||
-        m.materiaNombre !== materia.materiaNombre
-      );
-    });
-    setSelectedMaterias(newSelectedMaterias);
+    popFromMateriasSeleccionadas(materia);
   };
 
   return (

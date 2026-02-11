@@ -13,14 +13,12 @@ import BuscarMaterias from "../BuscarMaterias";
 
 interface SettingsSidebarProps {
   selectedMaterias: MateriaByComisionDTO[];
-  setSelectedMaterias: React.Dispatch<
-    React.SetStateAction<MateriaByComisionDTO[]>
-  >;
+  pushToMateriasSeleccionadas: (nuevaMateria: MateriaByComisionDTO) => void;
 }
 
 export default function SettingsSidebar({
   selectedMaterias,
-  setSelectedMaterias,
+  pushToMateriasSeleccionadas,
 }: SettingsSidebarProps) {
   return (
     <Sheet>
@@ -43,7 +41,7 @@ export default function SettingsSidebar({
         <BuscarMaterias
           variant="inline"
           selectedMaterias={selectedMaterias}
-          setSelectedMaterias={setSelectedMaterias}
+          pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
         />
       </SheetContent>
     </Sheet>

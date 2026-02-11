@@ -1,8 +1,7 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import Footer from "./components/Footer";
 import SettingsSidebar from "./components/ui/SettingsSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
-import { MateriaByComisionDTO } from "./types/MateriaByComisionDTO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import DailySchedule from "./components/DailySchedule";
 import WeeklySchedule from "./components/WeeklySchedule";
@@ -18,19 +17,22 @@ import {
   DropdownMenuTrigger,
 } from "./components/ui/dropdown-menu";
 import { ArrowDown, CalendarIcon, ImageIcon } from "lucide-react";
+import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
 
 function App() {
-  const [selectedMaterias, setSelectedMaterias] = useState<
-    MateriaByComisionDTO[]
-  >([]);
+  const {
+    materiasSeleccionadas,
+    pushToMateriasSeleccionadas,
+    popFromMateriasSeleccionadas,
+  } = useMateriasSeleccionadas();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
 
-  const hasSelectedMaterias = selectedMaterias.length > 0;
+  const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
   const exportStartHour = useMemo(() => {
-    if (!selectedMaterias.length) return undefined;
+    if (!materiasSeleccionadas.length) return undefined;
     const hours: number[] = [];
-    selectedMaterias.forEach((materia) => {
+    materiasSeleccionadas.forEach((materia) => {
       materia.horarios.forEach((horario) => {
         const hour = Number(horario.horaDesde.substring(0, 2));
         if (!Number.isNaN(hour)) {
@@ -40,7 +42,7 @@ function App() {
     });
     if (!hours.length) return undefined;
     return Math.min(...hours);
-  }, [selectedMaterias]);
+  }, [materiasSeleccionadas]);
 
   const handleExportPng = async () => {
     if (!hasSelectedMaterias) return;
@@ -65,7 +67,10 @@ function App() {
     if (!hasSelectedMaterias) return;
 
     const SEMESTER_START = new Date(2026, 1, 1);
-    const icsContent = buildIcsFromMaterias(selectedMaterias, SEMESTER_START);
+    const icsContent = buildIcsFromMaterias(
+      materiasSeleccionadas,
+      SEMESTER_START,
+    );
 
     if (!icsContent) return;
 
@@ -85,13 +90,13 @@ function App() {
   return (
     <div className="min-h-screen bg-base-200">
       <SettingsSidebar
-        selectedMaterias={selectedMaterias}
-        setSelectedMaterias={setSelectedMaterias}
+        selectedMaterias={materiasSeleccionadas}
+        pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
       />
 
       <SelectedMateriasList
-        selectedMaterias={selectedMaterias}
-        setSelectedMaterias={setSelectedMaterias}
+        selectedMaterias={materiasSeleccionadas}
+        popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
       />
 
       <main className="container mx-auto p-4 space-y-6 max-w-6xl">
@@ -136,16 +141,16 @@ function App() {
 
           <div className="flex flex-row gap-2 overflow-x-auto">
             <TabsContent value="semanal">
-              <WeeklySchedule selectedMaterias={selectedMaterias} />
+              <WeeklySchedule selectedMaterias={materiasSeleccionadas} />
             </TabsContent>
             <TabsContent value="diario">
-              <DailySchedule selectedMaterias={selectedMaterias} />
+              <DailySchedule selectedMaterias={materiasSeleccionadas} />
             </TabsContent>
 
             <BuscarMaterias
               variant="card"
-              selectedMaterias={selectedMaterias}
-              setSelectedMaterias={setSelectedMaterias}
+              selectedMaterias={materiasSeleccionadas}
+              pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
             />
           </div>
         </Tabs>
@@ -154,7 +159,7 @@ function App() {
         {hasSelectedMaterias && (
           <div className="absolute -left-[99999px] top-0">
             <WeeklySchedule
-              selectedMaterias={selectedMaterias}
+              selectedMaterias={materiasSeleccionadas}
               containerRef={exportScheduleRef}
               hideCurrentTimeIndicator
               hideTodayHighlight
