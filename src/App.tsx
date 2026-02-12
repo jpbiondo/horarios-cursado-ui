@@ -1,6 +1,6 @@
 import { useMemo, useRef } from "react";
 import Footer from "./components/Footer";
-import SettingsSidebar from "./components/ui/SettingsSidebar";
+import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import DailySchedule from "./components/DailySchedule";
@@ -90,7 +90,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-base-200">
-      <SettingsSidebar
+      <BuscarMateriasSidebar
         selectedMaterias={materiasSeleccionadas}
         pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
       />
@@ -141,7 +141,7 @@ function App() {
             </div>
           </div>
 
-          <div className="flex flex-row gap-2 max-h-full">
+          <div className="flex flex-row gap-2 max-h-full overflow-x-auto">
             <TabsContent value="semanal">
               <WeeklySchedule
                 selectedMaterias={materiasSeleccionadas}
