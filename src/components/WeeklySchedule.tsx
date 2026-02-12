@@ -29,6 +29,7 @@ interface WeeklyScheduleProps {
   hideCurrentTimeIndicator?: boolean;
   hideTodayHighlight?: boolean;
   startHourOverride?: number;
+  heightInRem?: number;
 }
 const WeeklySchedule = ({
   selectedMaterias,
@@ -36,6 +37,7 @@ const WeeklySchedule = ({
   hideCurrentTimeIndicator,
   hideTodayHighlight,
   startHourOverride,
+  heightInRem = 2.5,
 }: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
   const calendarEvents = useMemo(
@@ -104,11 +106,14 @@ const WeeklySchedule = ({
           {WEEKDAYS.map((day, index) => (
             <div
               key={day + hour}
-              className={`relative border-r ${index === WEEKDAYS.length - 1 && "border-r-0"} border-b border-border h-10 transition-colors hover:bg-base-200/50 ${
+              className={`relative border-r ${index === WEEKDAYS.length - 1 && "border-r-0"} border-b border-border transition-colors hover:bg-base-200/50 ${
                 !hideTodayHighlight && todayIndex === index
                   ? "bg-base-200/30"
                   : "bg-base-100"
               }`}
+              style={{
+                height: `${heightInRem}rem`,
+              }}
             >
               {/* Render event if it starts at this hour */}
               {(() => {
@@ -132,8 +137,8 @@ const WeeklySchedule = ({
                           key={index}
                           className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor ${bgClass}`}
                           style={{
-                            top: `${(eventStartTime.getMinutes() / 60) * 2.5}rem`,
-                            height: `${durationInHours * 2.5}rem`,
+                            top: `${(eventStartTime.getMinutes() / 60) * heightInRem}rem`,
+                            height: `${durationInHours * heightInRem}rem`,
                           }}
                         >
                           <span className="text-sm text-center line-clamp-2">
@@ -153,24 +158,24 @@ const WeeklySchedule = ({
               {/* CURRENT TIME INDICATOR */}
               {!hideCurrentTimeIndicator &&
                 currentHour === hour.split(":")[0] && (
-                <div
-                  className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center z-20"
-                  style={{
-                    top: `${currentMinutePercent}%`,
-                  }}
-                >
-                  {index === 0 && (
-                    <div className="flex">
-                      <Badge
-                        variant="destructive"
-                        className="!bg-destructive/90"
-                      >
-                        {currentTime}
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-              )}
+                  <div
+                    className="absolute left-0 w-full h-[2px] bg-destructive/60 flex justify-start items-center z-20"
+                    style={{
+                      top: `${currentMinutePercent}%`,
+                    }}
+                  >
+                    {index === 0 && (
+                      <div className="flex">
+                        <Badge
+                          variant="destructive"
+                          className="!bg-destructive/90"
+                        >
+                          {currentTime}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                )}
             </div>
           ))}
         </React.Fragment>

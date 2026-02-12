@@ -114,8 +114,8 @@ export default function BuscarMaterias({
   };
 
   const formContent = (
-    <div className=" py-4 space-y-6">
-      <div className="px-4 space-y-6">
+    <div className="pt-4 space-y-6 flex flex-col flex-1 min-h-0">
+      <div className="px-4 space-y-6 flex-shrink-0">
         <div className="grid gap-3">
           <Label>Carrera</Label>
           <Select
@@ -186,17 +186,16 @@ export default function BuscarMaterias({
       </div>
 
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
-        <div className="px-1">
-          <h3 className={"px-3 mb-3 text-md font-semibold leading-none"}>
+        <div className="px-1 flex-1 min-h-0 flex flex-col">
+          <h3 className="px-3 mb-3 text-md font-semibold leading-none flex-shrink-0">
             Materias disponibles
           </h3>
-          <div className="max-h-[230px] overflow-auto">
+          <div className="flex-1 min-h-0 overflow-auto">
             {materiasSeleccionables.map((carreraMateria) => {
               const yaSeleccionada = materiaYaSeleccionada(
                 carreraMateria,
                 selectedMaterias,
               );
-              console.log(yaSeleccionada);
               return (
                 <Card
                   key={carreraMateria.materiaNombre}
@@ -245,14 +244,16 @@ export default function BuscarMaterias({
 
   if (variant === "card") {
     return (
-      <Card className="border-border rounded-none max-w-64 hidden lg:block">
-        <CardHeader className="px-4">
+      <Card className="border-border rounded-none max-w-64 max-h-[53.5rem] hidden lg:flex flex-col">
+        <CardHeader className="px-4 flex-shrink-0">
           <CardTitle>Buscar materias</CardTitle>
           <CardDescription>
             Busca materias para añadir al calendario
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-0">{formContent}</CardContent>
+        <CardContent className="px-0 flex-1 min-h-0 overflow-hidden flex flex-col">
+          {formContent}
+        </CardContent>
       </Card>
     );
   }

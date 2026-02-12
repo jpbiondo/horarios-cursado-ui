@@ -141,14 +141,16 @@ function App() {
             </div>
           </div>
 
-          <div className="flex flex-row gap-2 overflow-x-auto">
+          <div className="flex flex-row gap-2 max-h-full">
             <TabsContent value="semanal">
-              <WeeklySchedule selectedMaterias={materiasSeleccionadas} />
+              <WeeklySchedule
+                selectedMaterias={materiasSeleccionadas}
+                heightInRem={3}
+              />
             </TabsContent>
             <TabsContent value="diario">
               <DailySchedule selectedMaterias={materiasSeleccionadas} />
             </TabsContent>
-
             <BuscarMaterias
               variant="card"
               selectedMaterias={materiasSeleccionadas}
@@ -166,6 +168,7 @@ function App() {
               hideCurrentTimeIndicator
               hideTodayHighlight
               startHourOverride={exportStartHour}
+              heightInRem={3}
             />
           </div>
         )}
