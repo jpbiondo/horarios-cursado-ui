@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./components/ui/dropdown-menu";
-import { ArrowDown, CalendarIcon, ImageIcon } from "lucide-react";
+import { CalendarIcon, EllipsisVertical, ImageIcon } from "lucide-react";
 import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
 
 function App() {
@@ -123,7 +123,7 @@ function App() {
                       aria-label="Export options"
                       disabled={!hasSelectedMaterias}
                     >
-                      <ArrowDown />
+                      <EllipsisVertical />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
