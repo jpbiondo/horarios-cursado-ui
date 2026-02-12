@@ -16,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./components/ui/dropdown-menu";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
 import { CalendarIcon, EllipsisVertical, ImageIcon } from "lucide-react";
 import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
 
@@ -109,6 +110,7 @@ function App() {
               <TabsTrigger value="diario">Diario</TabsTrigger>
             </TabsList>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <ButtonGroup>
                 <Button
                   disabled={!hasSelectedMaterias}

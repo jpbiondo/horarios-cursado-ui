@@ -4,6 +4,7 @@ import { WEEKDAYS } from "../constants";
 import {
   getDifferenceInHours,
   getHours,
+  MATERIA_COLOR_CLASSES,
   parseCarreraMateriasToEvents,
   parseTime,
 } from "../lib/utils";
@@ -15,13 +16,6 @@ const todayIndex = (() => {
   const jsDay = new Date().getDay(); // 0–6, Sun–Sat
   return (jsDay + 6) % 7; // shift so Monday=0
 })();
-
-const COLOR_MAP: Record<string, string> = {
-  blue: "bg-info/20 border-info",
-  red: "bg-error/20 border-error text-error-content",
-  green: "bg-success/20 border-success text-success-content",
-  orange: "bg-warning/20 border-warning text-warning-content",
-};
 
 interface WeeklyScheduleProps {
   selectedMaterias?: MateriaByComisionDTO[];
@@ -128,7 +122,7 @@ const WeeklySchedule = ({
                   );
 
                   const bgClass =
-                    COLOR_MAP[event.color] ||
+                    MATERIA_COLOR_CLASSES[event.color] ||
                     "bg-neutral/20 border-neutral text-neutral-content";
                   return (
                     <Tooltip>

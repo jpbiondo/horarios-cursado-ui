@@ -1,5 +1,6 @@
 import { Trash, X } from "lucide-react";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { getMateriaColor, MATERIA_COLOR_CLASSES } from "../lib/utils";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
@@ -31,11 +32,18 @@ export default function SelectedMateriasList({
           No hay materias seleccionadas
         </span>
       ) : (
-        selectedMaterias.map((materia) => (
+        selectedMaterias.map((materia) => {
+          const colorKey = getMateriaColor(
+            selectedMaterias,
+            materia.materiaNombre,
+            materia.comisionNombre,
+          );
+          const colorClass = MATERIA_COLOR_CLASSES[colorKey] ?? "";
+          return (
           <Badge
             key={`${materia.comisionNombre}-${materia.materiaNombre}`}
             variant="outline"
-            className="justify-between p-2 items-center"
+            className={`justify-between p-2 items-center ${colorClass}`}
           >
             {materia.comisionNombre} - {materia.materiaNombre}{" "}
             <span className="pointer-events-auto">
@@ -45,7 +53,8 @@ export default function SelectedMateriasList({
               />
             </span>
           </Badge>
-        ))
+          );
+        })
       )}
       {selectedMaterias.length > 0 && (
         <Button variant="destructive" onClick={handleDeleteAllMaterias}>
