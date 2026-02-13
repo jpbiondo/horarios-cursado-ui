@@ -23,46 +23,51 @@ export default function SelectedMateriasList({
   };
 
   return (
-    <div className="flex-shrink-0 z-20 w-full bg-accent p-2 flex flex-wrap items-center gap-2 min-h-12">
-      {selectedMaterias.length === 0 ? (
-        <span className="text-sm text-muted-foreground">
-          No hay materias seleccionadas
-        </span>
-      ) : (
-        selectedMaterias.map((materia) => {
-          const colorKey = getMateriaColor(
-            selectedMaterias,
-            materia.materiaNombre,
-            materia.comisionNombre,
-          );
-          const colorClass = MATERIA_COLOR_CLASSES[colorKey] ?? "";
-          return (
-            <Badge
-              key={`${materia.comisionNombre}-${materia.materiaNombre}`}
-              variant="outline"
-              className={`justify-between p-2 items-center ${colorClass}`}
+    <div className="flex-shrink-0 z-20 w-full bg-accent p-2 min-h-12">
+      <div
+        className="flex items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth"
+        style={{ scrollbarWidth: "thin" }}
+      >
+        {selectedMaterias.length === 0 ? (
+          <span className="text-sm text-muted-foreground flex-shrink-0">
+            No hay materias seleccionadas
+          </span>
+        ) : (
+          <>
+            {selectedMaterias.map((materia) => {
+              const colorKey = getMateriaColor(
+                selectedMaterias,
+                materia.materiaNombre,
+                materia.comisionNombre,
+              );
+              const colorClass = MATERIA_COLOR_CLASSES[colorKey] ?? "";
+              return (
+                <Badge
+                  key={`${materia.comisionNombre}-${materia.materiaNombre}`}
+                  variant="outline"
+                  className={`flex-shrink-0 justify-between p-2 items-center ${colorClass}`}
+                >
+                  {materia.comisionNombre} - {materia.materiaNombre}{" "}
+                  <span className="pointer-events-auto">
+                    <X
+                      className="h-3 w-3 cursor-pointer"
+                      onClick={() => handleDeleteMateria(materia)}
+                    />
+                  </span>
+                </Badge>
+              );
+            })}
+            <Button
+              variant="link"
+              className="text-destructive flex-shrink-0"
+              onClick={handleDeleteAllMaterias}
             >
-              {materia.comisionNombre} - {materia.materiaNombre}{" "}
-              <span className="pointer-events-auto">
-                <X
-                  className="h-3 w-3 cursor-pointer"
-                  onClick={() => handleDeleteMateria(materia)}
-                />
-              </span>
-            </Badge>
-          );
-        })
-      )}
-      {selectedMaterias.length > 0 && (
-        <Button
-          variant="link"
-          className="text-destructive"
-          onClick={handleDeleteAllMaterias}
-        >
-          <Trash />
-          Eliminar todo
-        </Button>
-      )}
+              <Trash />
+              Eliminar todo
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
