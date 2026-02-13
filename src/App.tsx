@@ -1,23 +1,14 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
 import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import DailySchedule from "./components/DailySchedule";
 import WeeklySchedule from "./components/WeeklySchedule";
-import { Button } from "./components/ui/button";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { buildIcsFromMaterias } from "./lib/utils";
-import { ButtonGroup } from "./components/ui/button-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./components/ui/dropdown-menu";
-import { ThemeToggle } from "./components/ui/ThemeToggle";
-import { CalendarIcon, EllipsisVertical, ImageIcon } from "lucide-react";
 import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
 
 function App() {
@@ -28,6 +19,7 @@ function App() {
     deleteAllMateriasSeleccionadas,
   } = useMateriasSeleccionadas();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
@@ -91,9 +83,17 @@ function App() {
 
   return (
     <div className="min-h-screen bg-base-200">
+      <Navbar
+        hasSelectedMaterias={hasSelectedMaterias}
+        onExportPng={handleExportPng}
+        onExportIcs={handleExportIcs}
+      />
+
       <BuscarMateriasSidebar
         selectedMaterias={materiasSeleccionadas}
         pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
+        open={sidebarOpen}
+        onOpenChange={setSidebarOpen}
       />
 
       <SelectedMateriasList
@@ -104,46 +104,14 @@ function App() {
 
       <main className="container mx-auto p-4 space-y-6 max-w-6xl">
         <Tabs defaultValue="semanal">
-          <div className="flex justify-between mb-2 items-center">
+          <div className="mb-2">
             <TabsList>
               <TabsTrigger value="semanal">Semanal</TabsTrigger>
               <TabsTrigger value="diario">Diario</TabsTrigger>
             </TabsList>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <ButtonGroup>
-                <Button
-                  disabled={!hasSelectedMaterias}
-                  onClick={handleExportPng}
-                >
-                  Exportar
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="icon"
-                      aria-label="Export options"
-                      disabled={!hasSelectedMaterias}
-                    >
-                      <EllipsisVertical />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleExportPng}>
-                      <ImageIcon />
-                      PNG
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleExportIcs}>
-                      <CalendarIcon />
-                      ICS
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </ButtonGroup>
-            </div>
           </div>
 
-          <div className="flex flex-row gap-2 max-h-full overflow-x-auto">
+          <div className="flex flex-row gap-2 overflow-x-auto">
             <TabsContent value="semanal">
               <WeeklySchedule
                 selectedMaterias={materiasSeleccionadas}
