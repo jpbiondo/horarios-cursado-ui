@@ -115,7 +115,7 @@ export default function BuscarMaterias({
 
   const formContent = (
     <div className="pt-4 space-y-6 flex flex-col flex-1 min-h-0">
-      <div className="px-4 space-y-6 flex-shrink-0">
+      <div className="px-4 space-y-6 flex flex-row  items-center gap-4">
         <div className="grid gap-3">
           <Label>Carrera</Label>
           <Select
@@ -173,24 +173,22 @@ export default function BuscarMaterias({
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full flex flex-col">
-          <Button
-            variant="default"
-            disabled={!selectedCarrera || !selectedPlan || !selectedComision}
-            onClick={handleClickSearch}
-          >
-            <Search />
-            Buscar materias
-          </Button>
-        </div>
+        <Button
+          variant="default"
+          disabled={!selectedCarrera || !selectedPlan || !selectedComision}
+          onClick={handleClickSearch}
+        >
+          <Search />
+          Buscar materias
+        </Button>
       </div>
 
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
         <div className="px-1 flex-1 min-h-0 flex flex-col">
           <h3 className="px-3 mb-3 text-md font-semibold leading-none flex-shrink-0">
-            Materias disponibles
+            Resultados
           </h3>
-          <div className="flex-1 min-h-0 overflow-auto">
+          <div className="flex-1 min-h-0 overflow-auto flex flex-row gap-4">
             {materiasSeleccionables.map((carreraMateria) => {
               const yaSeleccionada = materiaYaSeleccionada(
                 carreraMateria,
@@ -205,7 +203,7 @@ export default function BuscarMaterias({
                     <Badge variant="outline">
                       {carreraMateria.comisionNombre}
                     </Badge>
-                    <CardTitle className="text-sm flex flex-col">
+                    <CardTitle className="text-sm">
                       <span>{carreraMateria.materiaNombre}</span>
                     </CardTitle>
                     <CardAction>

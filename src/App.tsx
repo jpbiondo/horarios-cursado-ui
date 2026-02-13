@@ -10,6 +10,13 @@ import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { buildIcsFromMaterias } from "./lib/utils";
 import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./components/ui/collapsible";
+import { Button } from "./components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 function App() {
   const {
@@ -20,6 +27,7 @@ function App() {
   } = useMateriasSeleccionadas();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
@@ -82,19 +90,19 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="bg-base-200 h-screen flex flex-col overflow-hidden relative">
       <Navbar
         hasSelectedMaterias={hasSelectedMaterias}
         onExportPng={handleExportPng}
         onExportIcs={handleExportIcs}
       />
 
-      <BuscarMateriasSidebar
+      {/* <BuscarMateriasSidebar
         selectedMaterias={materiasSeleccionadas}
         pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
-      />
+      /> */}
 
       <SelectedMateriasList
         selectedMaterias={materiasSeleccionadas}
@@ -102,33 +110,36 @@ function App() {
         deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
       />
 
-      <main className="container mx-auto p-4 space-y-6 max-w-6xl">
-        <Tabs defaultValue="semanal">
-          <div className="mb-2">
-            <TabsList>
-              <TabsTrigger value="semanal">Semanal</TabsTrigger>
-              <TabsTrigger value="diario">Diario</TabsTrigger>
-            </TabsList>
-          </div>
+      <main className="container mx-auto flex-1 min-h-0 flex flex-col relative">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto pb-9">
+          <WeeklySchedule
+            selectedMaterias={materiasSeleccionadas}
+            heightInRem={3}
+          />
+        </div>
 
-          <div className="flex flex-row gap-2 overflow-x-auto">
-            <TabsContent value="semanal">
-              <WeeklySchedule
+        <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-border bg-background shadow-lg">
+          <Collapsible open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full">
+                {drawerOpen ? <ChevronDown /> : <ChevronUp />}
+                Materias disponibles
+              </Button>
+            </CollapsibleTrigger>
+
+            <CollapsibleContent
+              className="overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 150px)" }}
+            >
+              {/* Form + results */}
+              <BuscarMaterias
+                variant="inline"
                 selectedMaterias={materiasSeleccionadas}
-                heightInRem={3}
+                pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
               />
-            </TabsContent>
-            <TabsContent value="diario">
-              <DailySchedule selectedMaterias={materiasSeleccionadas} />
-            </TabsContent>
-            <BuscarMaterias
-              variant="card"
-              selectedMaterias={materiasSeleccionadas}
-              pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
-            />
-          </div>
-        </Tabs>
-
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
         {/* Off-screen WeeklySchedule for PNG export (print-friendly) */}
         {hasSelectedMaterias && (
           <div className="absolute -left-[99999px] top-0">
@@ -144,7 +155,7 @@ function App() {
         )}
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

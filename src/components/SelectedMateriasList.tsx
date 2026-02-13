@@ -23,10 +23,7 @@ export default function SelectedMateriasList({
   };
 
   return (
-    <div className="w-full bg-accent p-2 flex flex-wrap items-center gap-2 min-h-12">
-      <span className="text-sm tracking-wide font-semibold uppercase">
-        Materias Seleccionadas
-      </span>
+    <div className="flex-shrink-0 z-20 w-full bg-accent p-2 flex flex-wrap items-center gap-2 min-h-12">
       {selectedMaterias.length === 0 ? (
         <span className="text-sm text-muted-foreground">
           No hay materias seleccionadas
@@ -40,24 +37,28 @@ export default function SelectedMateriasList({
           );
           const colorClass = MATERIA_COLOR_CLASSES[colorKey] ?? "";
           return (
-          <Badge
-            key={`${materia.comisionNombre}-${materia.materiaNombre}`}
-            variant="outline"
-            className={`justify-between p-2 items-center ${colorClass}`}
-          >
-            {materia.comisionNombre} - {materia.materiaNombre}{" "}
-            <span className="pointer-events-auto">
-              <X
-                className="h-3 w-3 cursor-pointer"
-                onClick={() => handleDeleteMateria(materia)}
-              />
-            </span>
-          </Badge>
+            <Badge
+              key={`${materia.comisionNombre}-${materia.materiaNombre}`}
+              variant="outline"
+              className={`justify-between p-2 items-center ${colorClass}`}
+            >
+              {materia.comisionNombre} - {materia.materiaNombre}{" "}
+              <span className="pointer-events-auto">
+                <X
+                  className="h-3 w-3 cursor-pointer"
+                  onClick={() => handleDeleteMateria(materia)}
+                />
+              </span>
+            </Badge>
           );
         })
       )}
       {selectedMaterias.length > 0 && (
-        <Button variant="destructive" onClick={handleDeleteAllMaterias}>
+        <Button
+          variant="link"
+          className="text-destructive"
+          onClick={handleDeleteAllMaterias}
+        >
           <Trash />
           Eliminar todo
         </Button>
