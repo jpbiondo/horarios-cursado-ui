@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { CalendarSearch } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
@@ -68,6 +69,27 @@ const WeeklySchedule = ({
 
     return () => clearInterval(interval);
   }, []);
+
+  const isEmpty = !selectedMaterias?.length && !hideCurrentTimeIndicator;
+
+  if (isEmpty) {
+    return (
+      <div
+        ref={containerRef}
+        className="flex min-h-[12rem] min-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/20 py-16"
+      >
+        <CalendarSearch className="size-12 text-muted-foreground/50" />
+        <div className="space-y-1 text-center">
+          <p className="font-medium text-foreground">
+            No hay materias seleccionadas
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Busca materias en el panel lateral para añadirlas al calendario
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

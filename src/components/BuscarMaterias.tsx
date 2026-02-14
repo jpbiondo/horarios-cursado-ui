@@ -198,7 +198,7 @@ export default function BuscarMaterias({
               );
               return (
                 <Card
-                  key={carreraMateria.materiaNombre}
+                  key={`${carreraMateria.comisionNombre}-${carreraMateria.materiaNombre}`}
                   className="py-4 gap-0 border-border mb-3 disabled"
                 >
                   <CardHeader className="px-4">

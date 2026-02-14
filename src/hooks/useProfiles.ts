@@ -1,11 +1,16 @@
 import { MateriaByComisionDTO } from "@/types/MateriaByComisionDTO";
 import { Profile } from "@/types/Profile";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const STORAGE_KEY = "horarios-profiles";
 const LEGACY_KEY = "materiasGuardadas";
 
-function loadProfiles(): { profiles: Profile[]; activeProfileId: string | null } {
+function loadProfiles(): {
+  profiles: Profile[];
+  activeProfileId: string | null;
+  hadRecoveryError?: boolean;
+} {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -22,7 +27,12 @@ function loadProfiles(): { profiles: Profile[]; activeProfileId: string | null }
     }
 
     const legacy = localStorage.getItem(LEGACY_KEY);
-    const materias: MateriaByComisionDTO[] = legacy ? JSON.parse(legacy) : [];
+    let materias: MateriaByComisionDTO[] = [];
+    try {
+      materias = legacy ? JSON.parse(legacy) : [];
+    } catch {
+      localStorage.removeItem(LEGACY_KEY);
+    }
     const defaultProfile: Profile = {
       id: crypto.randomUUID(),
       name: "Predeterminado",
@@ -34,13 +44,18 @@ function loadProfiles(): { profiles: Profile[]; activeProfileId: string | null }
       activeProfileId: defaultProfile.id,
     };
   } catch {
+    localStorage.removeItem(STORAGE_KEY);
     const defaultProfile: Profile = {
       id: crypto.randomUUID(),
       name: "Predeterminado",
       materias: [],
       createdAt: Date.now(),
     };
-    return { profiles: [defaultProfile], activeProfileId: defaultProfile.id };
+    return {
+      profiles: [defaultProfile],
+      activeProfileId: defaultProfile.id,
+      hadRecoveryError: true,
+    };
   }
 }
 
@@ -56,11 +71,21 @@ function saveProfiles(
 
 export function useProfiles() {
   const [state, setState] = useState(loadProfiles);
+  const hasShownRecoveryToast = useRef(false);
+
+  useEffect(() => {
+    if (state.hadRecoveryError && !hasShownRecoveryToast.current) {
+      hasShownRecoveryToast.current = true;
+      toast.warning(
+        "Los datos de perfiles se restauraron tras un error. Verifica tu horario.",
+      );
+    }
+  }, [state.hadRecoveryError]);
 
   const persist = useCallback(
     (profiles: Profile[], activeProfileId: string | null) => {
       saveProfiles(profiles, activeProfileId);
-      setState({ profiles, activeProfileId });
+      setState((prev) => ({ ...prev, profiles, activeProfileId }));
     },
     [],
   );

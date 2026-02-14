@@ -1,7 +1,24 @@
-import { ChevronDown, Copy, Pencil, Plus, Settings, Trash2, User } from "lucide-react";
-import { useState } from "react";
+import {
+  Check,
+  ChevronDown,
+  Copy,
+  Pencil,
+  Plus,
+  Settings,
+  Trash2,
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Profile } from "@/types/Profile";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Label } from "./ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 interface ProfileSwitcherProps {
@@ -31,10 +49,33 @@ export default function ProfileSwitcher({
   onDeleteProfile,
 }: ProfileSwitcherProps) {
   const [manageOpen, setManageOpen] = useState(false);
+  const [renameProfileState, setRenameProfileState] = useState<Profile | null>(
+    null,
+  );
+  const [renameInputValue, setRenameInputValue] = useState("");
+
+  useEffect(() => {
+    if (renameProfileState) {
+      setRenameInputValue(renameProfileState.name);
+    }
+  }, [renameProfileState]);
 
   const handleRename = (profile: Profile) => {
-    const name = window.prompt("Nombre del perfil:", profile.name);
-    if (name != null && name.trim()) onRenameProfile(profile.id, name.trim());
+    setRenameProfileState(profile);
+  };
+
+  const handleRenameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = renameInputValue.trim();
+    if (trimmed && renameProfileState) {
+      onRenameProfile(renameProfileState.id, trimmed);
+      setRenameProfileState(null);
+    }
+  };
+
+  const handleRenameClose = () => {
+    setRenameProfileState(null);
+    setRenameInputValue("");
   };
 
   return (
@@ -59,18 +100,25 @@ export default function ProfileSwitcher({
           side="bottom"
           className="w-[min(calc(100vw-2rem),16rem)] max-h-[70vh] overflow-y-auto"
         >
-          {profiles.map((profile) => (
-            <DropdownMenuItem
-              key={profile.id}
-              className="py-2.5 min-h-11 touch-manipulation"
-              onClick={() => onSelectProfile(profile.id)}
-            >
-              <span className="truncate flex-1">{profile.name}</span>
-              <span className="text-xs text-muted-foreground shrink-0">
-                {profile.materias.length}
-              </span>
-            </DropdownMenuItem>
-          ))}
+          {profiles.map((profile) => {
+            const isActive = profile.id === activeProfile?.id;
+            return (
+              <DropdownMenuItem
+                key={profile.id}
+                className="py-2.5 min-h-11 touch-manipulation"
+                onClick={() => onSelectProfile(profile.id)}
+                aria-current={isActive ? "true" : undefined}
+              >
+                <span className="w-4 shrink-0">
+                  {isActive && <Check className="size-4" />}
+                </span>
+                <span className="truncate flex-1">{profile.name}</span>
+                <span className="text-xs text-muted-foreground shrink-0">
+                  {profile.materias.length}
+                </span>
+              </DropdownMenuItem>
+            );
+          })}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="py-2.5 min-h-11 touch-manipulation"
@@ -89,57 +137,96 @@ export default function ProfileSwitcher({
         </DropdownMenuContent>
       </DropdownMenu>
       <Sheet open={manageOpen} onOpenChange={setManageOpen}>
-            <SheetContent side="bottom" className="h-[70vh] max-h-[32rem]">
-              <SheetHeader>
-                <SheetTitle>Perfiles</SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col gap-2 overflow-y-auto py-4">
-                {profiles.map((profile) => (
-                  <div
-                    key={profile.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 p-3"
+        <SheetContent side="bottom" className="h-[70vh] max-h-[32rem]">
+          <SheetHeader>
+            <SheetTitle>Perfiles</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-2 overflow-y-auto py-4">
+            {profiles.map((profile) => (
+              <div
+                key={profile.id}
+                className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 p-3"
+              >
+                <span className="truncate flex-1 font-medium">
+                  {profile.name}
+                </span>
+                <span className="text-sm text-muted-foreground shrink-0">
+                  {profile.materias.length} materias
+                </span>
+                <div className="flex shrink-0 gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 touch-manipulation"
+                    aria-label="Renombrar"
+                    onClick={() => {
+                      setManageOpen(false);
+                      handleRename(profile);
+                    }}
                   >
-                    <span className="truncate flex-1 font-medium">
-                      {profile.name}
-                    </span>
-                    <span className="text-sm text-muted-foreground shrink-0">
-                      {profile.materias.length} materias
-                    </span>
-                    <div className="flex shrink-0 gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 touch-manipulation"
-                        aria-label="Renombrar"
-                        onClick={() => handleRename(profile)}
-                      >
-                        <Pencil className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 touch-manipulation"
-                        aria-label="Duplicar"
-                        onClick={() => onDuplicateProfile(profile.id)}
-                      >
-                        <Copy className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 touch-manipulation text-destructive"
-                        aria-label="Eliminar"
-                        disabled={profiles.length <= 1}
-                        onClick={() => onDeleteProfile(profile.id)}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 touch-manipulation"
+                    aria-label="Duplicar"
+                    onClick={() => onDuplicateProfile(profile.id)}
+                  >
+                    <Copy className="size-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 touch-manipulation text-destructive"
+                    aria-label="Eliminar"
+                    disabled={profiles.length <= 1}
+                    onClick={() => onDeleteProfile(profile.id)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
               </div>
-            </SheetContent>
+            ))}
+          </div>
+        </SheetContent>
       </Sheet>
+      <Dialog
+        open={!!renameProfileState}
+        onOpenChange={(open) => !open && handleRenameClose()}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Renombrar perfil</DialogTitle>
+            <DialogDescription>
+              Escribe el nuevo nombre para el perfil.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleRenameSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="profile-name">Nombre</Label>
+              <input
+                id="profile-name"
+                type="text"
+                value={renameInputValue}
+                onChange={(e) => setRenameInputValue(e.target.value)}
+                className="border-input bg-background w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                placeholder="Nombre del perfil"
+                autoFocus
+                autoComplete="off"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={handleRenameClose}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={!renameInputValue.trim()}>
+                Guardar
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

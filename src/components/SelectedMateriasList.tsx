@@ -48,12 +48,14 @@ export default function SelectedMateriasList({
                   className={`flex-shrink-0 justify-between p-2 items-center ${colorClass}`}
                 >
                   {materia.comisionNombre} - {materia.materiaNombre}{" "}
-                  <span className="pointer-events-auto">
-                    <X
-                      className="h-3 w-3 cursor-pointer"
-                      onClick={() => handleDeleteMateria(materia)}
-                    />
-                  </span>
+                  <button
+                    type="button"
+                    className="pointer-events-auto ml-1 rounded p-0.5 hover:bg-black/10 dark:hover:bg-white/10"
+                    aria-label={`Quitar ${materia.materiaNombre} - ${materia.comisionNombre}`}
+                    onClick={() => handleDeleteMateria(materia)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 </Badge>
               );
             })}

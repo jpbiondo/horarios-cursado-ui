@@ -6,6 +6,8 @@ import BuscarMaterias from "./components/BuscarMaterias";
 import WeeklySchedule from "./components/WeeklySchedule";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
+import { toast } from "sonner";
+import { SEMESTER_START } from "./constants";
 import { buildIcsFromMaterias } from "./lib/utils";
 import { useProfiles } from "./hooks/useProfiles";
 function App() {
@@ -56,15 +58,16 @@ function App() {
       link.href = dataUrl;
       link.download = "horario-semanal.png";
       link.click();
+      toast.success("Imagen exportada");
     } catch (error) {
       console.error("Error exporting PNG", error);
+      toast.error("Error al exportar la imagen");
     }
   };
 
   const handleExportIcs = () => {
     if (!hasSelectedMaterias) return;
 
-    const SEMESTER_START = new Date(2026, 1, 1);
     const icsContent = buildIcsFromMaterias(
       materiasSeleccionadas,
       SEMESTER_START,
@@ -83,6 +86,7 @@ function App() {
     link.click();
 
     URL.revokeObjectURL(url);
+    toast.success("Calendario ICS exportado");
   };
 
   return (
@@ -126,7 +130,7 @@ function App() {
               />
             </div>
           </div>
-          <aside className="w-80 min-w-80 flex-shrink-0  flex-col border-r border-border bg-background overflow-hidden hidden lg:flex">
+          <aside className="w-80 min-w-80 flex-shrink-0 flex-col border-r border-border bg-background overflow-hidden hidden lg:flex">
             <div className="px-4 py-3 border-b border-border">
               <h2 className="text-md font-semibold">Buscar materias</h2>
               <p className="text-sm text-muted-foreground">
@@ -154,8 +158,6 @@ function App() {
           </div>
         )}
       </main>
-
-      {/* <Footer /> */}
     </div>
   );
 }

@@ -22,7 +22,7 @@ export default function Navbar({
   profileSwitcher,
 }: NavbarProps) {
   return (
-    <header className="z-10  flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="z-10 flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 items-center justify-between gap-2 px-4">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <h1 className="truncate text-lg font-semibold text-foreground">
@@ -36,7 +36,11 @@ export default function Navbar({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" disabled={!hasSelectedMaterias}>
+              <Button
+                size="sm"
+                disabled={!hasSelectedMaterias}
+                aria-label="Exportar horario"
+              >
                 Exportar
               </Button>
             </DropdownMenuTrigger>

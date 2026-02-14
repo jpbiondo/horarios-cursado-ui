@@ -6,7 +6,7 @@ import {
   min,
   parse,
 } from "date-fns";
-import { DAY_HOURS } from "../constants";
+import { DAY_HOURS, SEMESTER_END } from "../constants";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
 import { clsx, type ClassValue } from "clsx";
@@ -224,8 +224,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const ICS_SEMESTER_END = new Date(2026, 5, 26, 23, 59, 59);
-
 const mapDiaToWeekdayIndex = (dia: string): number => {
   switch (dia) {
     case "Lunes":
@@ -277,7 +275,7 @@ export const buildIcsFromMaterias = (
   lines.push("PRODID:-//horarios-calendario-ui//UTN Calendar//ES");
 
   const dtStamp = formatIcsDate(new Date());
-  const until = format(ICS_SEMESTER_END, "yyyyMMdd'T'HHmmss'Z'");
+  const until = format(SEMESTER_END, "yyyyMMdd'T'HHmmss'Z'");
 
   materias.forEach((materia, materiaIndex) => {
     materia.horarios.forEach((horario, horarioIndex) => {

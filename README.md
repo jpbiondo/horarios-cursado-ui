@@ -1,54 +1,46 @@
-# React + TypeScript + Vite
+# Horarios UTN
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web para armar y visualizar horarios de materias de la UTN. Permite crear varios perfiles, explorar posibles combinaciones de cursadas y exportar a PNG o calendario ICS.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Buscar materias** por carrera, plan y comisión
+- **Crear perfiles** para especular diferentes horarios del semestre
+- **Vista semanal** con indicador de hora actual
+- **Exportar** a imagen PNG o archivo ICS (Google Calendar, Outlook, etc.)
+- **Tema claro/oscuro**
+- **Responsive** con sidebar en desktop y sheet en móvil
 
-## Expanding the ESLint configuration
+## Cómo usar
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Selecciona carrera, plan y comisión
+2. Busca las materias y añádelas al horario
+3. Crea perfiles para comparar distintas combinaciones
+4. Exporta tu horario final
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Los datos se guardan en `localStorage` (sin backend).
+
+## Desarrollo
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run build
 ```
+
+## Configuración
+
+- **Fechas del semestre** para exportar ICS: editar `src/constants/index.ts` (`SEMESTER_START`, `SEMESTER_END`)
+
+## Stack
+
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- Radix UI
+- Supabase (API de carreras/planes/comisiones)
