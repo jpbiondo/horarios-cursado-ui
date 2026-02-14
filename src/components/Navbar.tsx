@@ -12,23 +12,26 @@ interface NavbarProps {
   hasSelectedMaterias: boolean;
   onExportPng: () => void;
   onExportIcs: () => void;
+  profileSwitcher?: React.ReactNode;
 }
 
 export default function Navbar({
   hasSelectedMaterias,
   onExportPng,
   onExportIcs,
+  profileSwitcher,
 }: NavbarProps) {
   return (
     <header className="z-10  flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold text-foreground">
+      <div className="mx-auto flex h-14 items-center justify-between gap-2 px-4">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <h1 className="truncate text-lg font-semibold text-foreground">
             Horarios UTN
           </h1>
+          {profileSwitcher}
         </div>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
 
           <DropdownMenu>

@@ -1,19 +1,27 @@
 import { useMemo, useRef, useState } from "react";
 import Navbar from "./components/Navbar";
+import ProfileSwitcher from "./components/ProfileSwitcher";
 import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
 import WeeklySchedule from "./components/WeeklySchedule";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { buildIcsFromMaterias } from "./lib/utils";
-import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
+import { useProfiles } from "./hooks/useProfiles";
 function App() {
   const {
+    profiles,
+    activeProfile,
     materiasSeleccionadas,
     pushToMateriasSeleccionadas,
     popFromMateriasSeleccionadas,
     deleteAllMateriasSeleccionadas,
-  } = useMateriasSeleccionadas();
+    setActiveProfile,
+    createProfile,
+    renameProfile,
+    duplicateProfile,
+    deleteProfile,
+  } = useProfiles();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
@@ -83,6 +91,17 @@ function App() {
         hasSelectedMaterias={hasSelectedMaterias}
         onExportPng={handleExportPng}
         onExportIcs={handleExportIcs}
+        profileSwitcher={
+          <ProfileSwitcher
+            profiles={profiles}
+            activeProfile={activeProfile}
+            onSelectProfile={setActiveProfile}
+            onCreateProfile={createProfile}
+            onRenameProfile={renameProfile}
+            onDuplicateProfile={duplicateProfile}
+            onDeleteProfile={deleteProfile}
+          />
+        }
       />
 
       <BuscarMateriasSidebar
