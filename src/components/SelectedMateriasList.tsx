@@ -23,9 +23,9 @@ export default function SelectedMateriasList({
   };
 
   return (
-    <div className="flex-shrink-0 z-20 w-full bg-accent p-2 min-h-12">
+    <div className="flex-shrink-0 z-20 w-full flex flex-row items-center bg-accent p-2 min-h-12">
       <div
-        className="flex items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth"
+        className="flex flex-row h-full items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth"
         style={{ scrollbarWidth: "thin" }}
       >
         {selectedMaterias.length === 0 ? (

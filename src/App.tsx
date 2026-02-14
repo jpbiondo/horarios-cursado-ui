@@ -1,23 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
-import DailySchedule from "./components/DailySchedule";
 import WeeklySchedule from "./components/WeeklySchedule";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { buildIcsFromMaterias } from "./lib/utils";
 import { useMateriasSeleccionadas } from "./hooks/useMateriasSeleccionadas";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./components/ui/collapsible";
-import { Button } from "./components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
-
 function App() {
   const {
     materiasSeleccionadas,
@@ -26,11 +15,10 @@ function App() {
     deleteAllMateriasSeleccionadas,
   } = useMateriasSeleccionadas();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const exportStartHour = useMemo(() => {
     if (!materiasSeleccionadas.length) return undefined;
     const hours: number[] = [];
@@ -97,48 +85,41 @@ function App() {
         onExportIcs={handleExportIcs}
       />
 
-      {/* <BuscarMateriasSidebar
+      <BuscarMateriasSidebar
         selectedMaterias={materiasSeleccionadas}
         pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
-      /> */}
-
-      <SelectedMateriasList
-        selectedMaterias={materiasSeleccionadas}
-        popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
-        deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
       />
 
-      <main className="container mx-auto flex-1 min-h-0 flex flex-col relative">
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto pb-9">
-          <WeeklySchedule
-            selectedMaterias={materiasSeleccionadas}
-            heightInRem={3}
-          />
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-border bg-background shadow-lg">
-          <Collapsible open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full">
-                {drawerOpen ? <ChevronDown /> : <ChevronUp />}
-                Materias disponibles
-              </Button>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent
-              className="overflow-y-auto"
-              style={{ maxHeight: "calc(100vh - 150px)" }}
-            >
-              {/* Form + results */}
-              <BuscarMaterias
-                variant="inline"
+      <main className="w-full max-w-full mx-auto flex-1 min-h-0 flex flex-col relative">
+        <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
+          <div className="flex-1 relative min-h-0 overflow-y-auto overflow-x-auto">
+            <WeeklySchedule
+              selectedMaterias={materiasSeleccionadas}
+              heightInRem={3}
+            />
+            <div className="sticky bottom-0 z-10 w-full border-t border-border">
+              <SelectedMateriasList
                 selectedMaterias={materiasSeleccionadas}
-                pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
+                popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
+                deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
               />
-            </CollapsibleContent>
-          </Collapsible>
+            </div>
+          </div>
+          <aside className="w-80 min-w-80 flex-shrink-0  flex-col border-r border-border bg-background overflow-hidden hidden lg:flex">
+            <div className="px-4 py-3 border-b border-border">
+              <h2 className="text-md font-semibold">Buscar materias</h2>
+              <p className="text-sm text-muted-foreground">
+                Busca materias para añadir al calendario
+              </p>
+            </div>
+            <BuscarMaterias
+              variant="inline"
+              selectedMaterias={materiasSeleccionadas}
+              pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
+            />
+          </aside>
         </div>
         {/* Off-screen WeeklySchedule for PNG export (print-friendly) */}
         {hasSelectedMaterias && (
