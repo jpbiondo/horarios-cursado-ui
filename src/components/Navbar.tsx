@@ -34,12 +34,13 @@ export default function Navbar({
 
         <nav className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
+          {profileSwitcher}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 size="icon"
-                variant={"outline"}
+                variant="default"
                 disabled={!hasSelectedMaterias}
                 aria-label="Exportar horario"
               >
@@ -63,7 +64,6 @@ export default function Navbar({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {profileSwitcher}
         </nav>
       </div>
     </header>
