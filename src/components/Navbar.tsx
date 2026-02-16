@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ThemeToggle } from "./ui/ThemeToggle";
+import logo from "../assets/logo.png";
 
 interface NavbarProps {
   hasSelectedMaterias: boolean;
@@ -24,7 +25,8 @@ export default function Navbar({
   return (
     <header className="z-10 flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 items-center justify-between gap-2 px-4">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-1">
+          <img src={logo} className="h-15 dark:invert" />
           <h1 className="truncate text-lg font-semibold text-foreground">
             Horarios UTN
           </h1>
