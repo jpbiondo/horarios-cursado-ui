@@ -1,4 +1,4 @@
-import { CalendarIcon, ChevronDown, ImageIcon } from "lucide-react";
+import { CalendarIcon, ImageIcon, Share } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -24,10 +24,10 @@ export default function Navbar({
 }: NavbarProps) {
   return (
     <header className="z-10 flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 items-center justify-between gap-2 px-4">
-        <div className="flex min-w-0 flex-1 items-center gap-1">
-          <img src={logo} className="h-15 dark:invert" />
-          <h1 className="truncate text-lg font-semibold text-foreground">
+      <div className="mx-auto flex h-14 items-center justify-between gap-2 px-1 sm:px-4">
+        <div className="flex items-center gap-1">
+          <img src={logo} className="aspect-square h-14 w-14 dark:invert" />
+          <h1 className="truncate hidden sm:block text-lg font-semibold text-foreground">
             Horarios UTN
           </h1>
         </div>
@@ -38,14 +38,12 @@ export default function Navbar({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                size="sm"
+                size="icon"
                 variant={"outline"}
                 disabled={!hasSelectedMaterias}
                 aria-label="Exportar horario"
-                className="min-w-0 gap-1.5 px-2 sm:px-3 touch-manipulation min-h-10"
               >
-                Exportar
-                <ChevronDown className="size-4 shrink-0" />
+                <Share className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
