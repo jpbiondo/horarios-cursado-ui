@@ -151,7 +151,7 @@ const WeeklySchedule = ({
                       <TooltipTrigger asChild>
                         <div
                           key={index}
-                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor ${bgClass}`}
+                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor gap-1 ${bgClass}`}
                           style={{
                             top: `${(eventStartTime.getMinutes() / 60) * heightInRem}rem`,
                             height: `${durationInHours * heightInRem}rem`,
@@ -160,7 +160,7 @@ const WeeklySchedule = ({
                           <span className="text-sm text-center line-clamp-2">
                             {event.title}
                           </span>
-                          <span className="text-xs text-muted-foreground">{`${event.startHour}-${event.endHour}`}</span>
+                          <span className="text-xs font-medium">{`${event.startHour}-${event.endHour}`}</span>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
