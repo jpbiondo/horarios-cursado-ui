@@ -217,7 +217,11 @@ export default function ProfileSwitcher({
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleRenameClose}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleRenameClose}
+              >
                 Cancelar
               </Button>
               <Button type="submit" disabled={!renameInputValue.trim()}>
