@@ -76,9 +76,9 @@ const WeeklySchedule = ({
     return (
       <div
         ref={containerRef}
-        className="flex min-h-[12rem] min-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/20 py-16"
+        className="flex h-full min-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/20 py-16"
       >
-        <CalendarSearch className="size-12 text-muted-foreground/50" />
+        <CalendarSearch className="size-12 text-muted-foreground" />
         <div className="space-y-1 text-center">
           <p className="font-medium text-foreground">
             No hay materias seleccionadas
