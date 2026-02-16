@@ -116,6 +116,11 @@ function App() {
       />
 
       <main className="w-full max-w-full mx-auto flex-1 min-h-0 flex flex-col relative">
+        <SelectedMateriasList
+          selectedMaterias={materiasSeleccionadas}
+          popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
+          deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
+        />
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto">
             <WeeklySchedule
@@ -138,11 +143,6 @@ function App() {
             />
           </aside>
         </div>
-        <SelectedMateriasList
-          selectedMaterias={materiasSeleccionadas}
-          popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
-          deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
-        />
         {/* Off-screen WeeklySchedule for PNG export (print-friendly) */}
         {hasSelectedMaterias && (
           <div className="absolute -left-[99999px] top-0">
