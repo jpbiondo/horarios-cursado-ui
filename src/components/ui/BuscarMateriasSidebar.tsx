@@ -28,7 +28,7 @@ export default function BuscarMateriasSidebar({
       <Button
         variant="default"
         size="icon-lg"
-        className="fixed bottom-16 right-2 z-30 lg:hidden"
+        className="fixed bottom-2 right-2 z-30 lg:hidden h-12 w-12 rounded-full"
         aria-label="Buscar Materias"
         onClick={() => onOpenChange(true)}
       >
