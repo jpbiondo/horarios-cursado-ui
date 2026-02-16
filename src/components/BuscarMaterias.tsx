@@ -115,7 +115,7 @@ export default function BuscarMaterias({
 
   const formContent = (
     <div className="pt-4 space-y-6 flex flex-col flex-1 min-h-0">
-      <div className="px-4 space-y-6 flex-shrink-0">
+      <div className="px-2 space-y-6 flex-shrink-0">
         <div className="grid gap-3">
           <Label>Carrera</Label>
           <Select
@@ -123,7 +123,7 @@ export default function BuscarMaterias({
             disabled={loading}
             onValueChange={handleValueChangeCarrera}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full truncate">
               <SelectValue placeholder="Seleccione una carrera" />
             </SelectTrigger>
             <SelectContent>
@@ -142,7 +142,7 @@ export default function BuscarMaterias({
             disabled={loading}
             onValueChange={handleValueChangePlan}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full truncate">
               <SelectValue placeholder="Seleccione un plan" />
             </SelectTrigger>
             <SelectContent>
@@ -161,7 +161,7 @@ export default function BuscarMaterias({
             name="selectedComision"
             onValueChange={handleValueChangeComision}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full truncate">
               <SelectValue placeholder="Seleccione una comisión" />
             </SelectTrigger>
             <SelectContent>
@@ -173,16 +173,14 @@ export default function BuscarMaterias({
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full flex flex-col">
-          <Button
-            variant="default"
-            disabled={!selectedCarrera || !selectedPlan || !selectedComision}
-            onClick={handleClickSearch}
-          >
-            <Search />
-            Buscar materias
-          </Button>
-        </div>
+        <Button
+          variant="default"
+          disabled={!selectedCarrera || !selectedPlan || !selectedComision}
+          onClick={handleClickSearch}
+        >
+          <Search />
+          Buscar materias
+        </Button>
       </div>
 
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
