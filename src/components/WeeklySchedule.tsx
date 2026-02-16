@@ -35,6 +35,7 @@ const WeeklySchedule = ({
   heightInRem = 2.5,
 }: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
+  const [openTooltipKey, setOpenTooltipKey] = useState<string | null>(null);
   const calendarEvents = useMemo(
     () => parseCarreraMateriasToEvents(selectedMaterias || []),
     [selectedMaterias],
@@ -136,22 +137,39 @@ const WeeklySchedule = ({
                 const hourKey = hour.split(":")[0];
                 const cellEvents =
                   eventsByDayAndHour.get(`${day}-${hourKey}`) ?? [];
-                return cellEvents.map((event, index) => {
+                return cellEvents.map((event, eventIndex) => {
                   const eventStartTime = parseTime(event.startHour);
                   const durationInHours = getDifferenceInHours(
                     event.startHour,
                     event.endHour,
                   );
+                  const tooltipKey = `${day}-${hourKey}-${eventIndex}`;
+                  const isOpen = openTooltipKey === tooltipKey;
 
                   const bgClass =
                     MATERIA_COLOR_CLASSES[event.color] ||
                     "bg-neutral/20 border-neutral text-neutral-content";
                   return (
-                    <Tooltip>
+                    <Tooltip
+                      key={eventIndex}
+                      open={isOpen}
+                      onOpenChange={() => {
+                        /* Don't close on pointer leave—tooltip sticks until tap outside or tap subject again */
+                      }}
+                    >
                       <TooltipTrigger asChild>
                         <div
-                          key={index}
-                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor gap-1 ${bgClass}`}
+                          role="button"
+                          tabIndex={0}
+                          onPointerDown={(e) => {
+                            if (e.button === 0 || e.pointerType === "touch") {
+                              e.preventDefault();
+                              setOpenTooltipKey((prev) =>
+                                prev === tooltipKey ? null : tooltipKey,
+                              );
+                            }
+                          }}
+                          className={`absolute left-1/2 -translate-x-1/2 w-11/12 p-2 rounded-lg shadow-sm border-1 flex flex-col items-center justify-center z-10 cursor-pointer gap-1 touch-manipulation select-none active:scale-[0.98] ${bgClass}`}
                           style={{
                             top: `${(eventStartTime.getMinutes() / 60) * heightInRem}rem`,
                             height: `${durationInHours * heightInRem}rem`,
@@ -163,7 +181,9 @@ const WeeklySchedule = ({
                           <span className="text-xs font-medium">{`${event.startHour}-${event.endHour}`}</span>
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent
+                        onPointerDownOutside={() => setOpenTooltipKey(null)}
+                      >
                         <p>{event.title}</p>
                       </TooltipContent>
                     </Tooltip>
