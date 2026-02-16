@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { CalendarSearch } from "lucide-react";
 import { MateriaByComisionDTO } from "../../types/MateriaByComisionDTO";
 import { Button } from "./button";
 import {
@@ -28,11 +28,11 @@ export default function BuscarMateriasSidebar({
       <Button
         variant="default"
         size="icon-lg"
-        className="fixed bottom-2 right-2 z-20 lg:hidden"
+        className="fixed bottom-16 right-2 z-30 lg:hidden"
         aria-label="Buscar Materias"
         onClick={() => onOpenChange(true)}
       >
-        <Search className="size-4" />
+        <CalendarSearch className="size-5" />
       </Button>
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right">
