@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, Plus, Search } from "lucide-react";
+import { Clock, Loader2, Plus, Search } from "lucide-react";
 import { useCarreras } from "../hooks/useCarreras";
 import { usePlanes } from "../hooks/usePlanes";
 import { useComisiones } from "../hooks/useComisiones";
@@ -50,7 +50,7 @@ export default function BuscarMaterias({
   const { carreras, fetchCarreras, loading } = useCarreras();
   const { planes, fetchPlanes } = usePlanes();
   const { comisiones, fetchComisiones } = useComisiones();
-  const { carreraMaterias, fetchCarreraMaterias } =
+  const { carreraMaterias, fetchCarreraMaterias, loading: searchLoading } =
     useCarreraMateriasFilteredByComision();
 
   useEffect(() => {
@@ -175,10 +175,19 @@ export default function BuscarMaterias({
         </div>
         <Button
           variant="default"
-          disabled={!selectedCarrera || !selectedPlan || !selectedComision}
+          disabled={
+            !selectedCarrera ||
+            !selectedPlan ||
+            !selectedComision ||
+            searchLoading
+          }
           onClick={handleClickSearch}
         >
-          <Search />
+          {searchLoading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Search />
+          )}
           Buscar materias
         </Button>
       </div>
