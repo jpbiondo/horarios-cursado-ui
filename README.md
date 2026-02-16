@@ -27,6 +27,13 @@ npm install
 npm run dev
 ```
 
+## Tests
+
+```bash
+npm run test        # single run
+npm run test:watch  # watch mode
+```
+
 ## Build
 
 ```bash
