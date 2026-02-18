@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { SEMESTER_START } from "./constants";
 import { buildIcsFromMaterias } from "./lib/utils";
 import { useProfiles } from "./hooks/useProfiles";
+import { useTheme } from "next-themes";
 function App() {
   const {
     profiles,
@@ -25,6 +26,7 @@ function App() {
     deleteProfile,
   } = useProfiles();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
+  const { setTheme, resolvedTheme } = useTheme();
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
@@ -50,7 +52,7 @@ function App() {
     try {
       const dataUrl = await toPng(exportScheduleRef.current, {
         cacheBust: true,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: resolvedTheme === "light" ? "#FFFFFF" : "#121212",
         pixelRatio: 2,
       });
 
