@@ -47,7 +47,7 @@ export default function SelectedMateriasList({
   };
 
   return (
-    <div className="flex-shrink-0 z-20 w-full flex flex-row items-center bg-accent p-1 min-h-12">
+    <div className="flex-shrink-0 z-20 w-full flex flex-row items-center bg-primary-foreground p-1 min-h-12">
       <div className="relative flex-1 min-w-0">
         <div
           ref={scrollRef}
