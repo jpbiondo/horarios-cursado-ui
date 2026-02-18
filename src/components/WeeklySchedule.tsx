@@ -184,7 +184,7 @@ const WeeklySchedule = ({
                       <TooltipContent
                         onPointerDownOutside={() => setOpenTooltipKey(null)}
                       >
-                        <p>{event.title}</p>
+                        <p>{event.desc}</p>
                       </TooltipContent>
                     </Tooltip>
                   );

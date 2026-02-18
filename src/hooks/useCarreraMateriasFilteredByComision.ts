@@ -30,7 +30,7 @@ export const useCarreraMateriasFilteredByComision = () => {
       type Row = {
         id: number;
         materia_id: number | null;
-        materia: { nombre: string | null } | null;
+        materia: { nombre: string | null; abreviatura: string | null } | null;
         carrera_plan_comision: { nombre: string | null } | null;
         carrera_plan_comision_materia_horario: {
           hora_inicio: string | null;
@@ -41,13 +41,14 @@ export const useCarreraMateriasFilteredByComision = () => {
       const { data: rows, error: rowsErr } = await supabase
         .from("carrera_plan_comision_materia")
         .select(
-          "id, materia_id, materia(nombre), carrera_plan_comision(nombre), carrera_plan_comision_materia_horario(hora_inicio, hora_fin, dia(nombre))",
+          "id, materia_id, materia(nombre, abreviatura), carrera_plan_comision(nombre), carrera_plan_comision_materia_horario(hora_inicio, hora_fin, dia(nombre))",
         )
         .eq("carrera_plan_comision_id", comisionId);
       if (rowsErr) throw rowsErr;
       const dtos: MateriaByComisionDTO[] = (rows ?? []).map((r: Row) => ({
         comisionNombre: r.carrera_plan_comision?.nombre ?? "",
         materiaNombre: r.materia?.nombre ?? "",
+        materiaNombreAbrev: r.materia?.abreviatura ?? "",
         horarios: (r.carrera_plan_comision_materia_horario ?? []).map(
           toHorario,
         ),

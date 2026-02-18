@@ -1,5 +1,6 @@
 declare interface CalendarEvent {
   title: string;
+  desc: string;
   startHour: string;
   endHour: string;
   day: string;
