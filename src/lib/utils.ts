@@ -122,7 +122,7 @@ export const parseCarreraMateriasToEvents = (
         desc: `${materia.materiaNombre} ${materia.comisionNombre}`,
         startHour: horario.horaDesde.substring(0, 5),
         endHour: horario.horaHasta.substring(0, 5),
-        day: mapDiaToDiaAbreviado(horario.dia),
+        day: getAbreviacionDia(horario.dia),
         color,
       });
     }
@@ -131,23 +131,8 @@ export const parseCarreraMateriasToEvents = (
   return events;
 };
 
-const mapDiaToDiaAbreviado = (dia: string): string => {
-  switch (dia) {
-    case "Lunes":
-      return "lun";
-    case "Martes":
-      return "mar";
-    case "Miércoles":
-      return "mié";
-    case "Jueves":
-      return "jue";
-    case "Viernes":
-      return "vie";
-    case "Sábado":
-      return "sáb";
-    default:
-      return "lun";
-  }
+export const getAbreviacionDia = (dia: string): string => {
+  return dia.toLowerCase().slice(0, 3);
 };
 
 // A genuine show of love of the craft
@@ -187,19 +172,6 @@ export const haySuperposicionHorarios = (
   return false;
 };
 
-// Spanish day abbreviations mapping
-const dayAbbreviations: Record<string, string> = {
-  Lunes: "Lun.",
-  Martes: "Mar.",
-  Miércoles: "Mier.",
-  Miercoles: "Mier.", // Alternative spelling
-  Jueves: "Jue.",
-  Viernes: "Vie.",
-  Sábado: "Sáb.",
-  Sabado: "Sáb.", // Alternative spelling
-  Domingo: "Dom.",
-};
-
 // Function to format time from HH:MM:SS to HH:MM
 export const formatTime = (time: string): string => {
   if (time.length > 5) {
@@ -208,16 +180,11 @@ export const formatTime = (time: string): string => {
   return time;
 };
 
-// Function to get abbreviated day name
-export const getAbbreviatedDay = (day: string): string => {
-  return dayAbbreviations[day] || day;
-};
-
 // Function to create compact schedule string
 export const formatCompactSchedule = (horarios: any[]): string => {
   return horarios
     .map((horario) => {
-      const day = getAbbreviatedDay(horario.dia);
+      const day = getAbreviacionDia(horario.dia);
       const startTime = formatTime(horario.horaDesde);
       const endTime = formatTime(horario.horaHasta);
       return `${day} ${startTime}-${endTime}`;
@@ -229,21 +196,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const mapDiaToWeekdayIndex = (dia: string): number => {
+const getDiaSemanaIndex = (dia: string): number => {
   switch (dia) {
     case "Lunes":
       return 1;
     case "Martes":
       return 2;
     case "Miércoles":
-    case "Miercoles":
       return 3;
     case "Jueves":
       return 4;
     case "Viernes":
       return 5;
     case "Sábado":
-    case "Sabado":
       return 6;
     case "Domingo":
       return 0;
@@ -284,7 +249,7 @@ export const buildIcsFromMaterias = (
 
   materias.forEach((materia, materiaIndex) => {
     materia.horarios.forEach((horario, horarioIndex) => {
-      const weekday = mapDiaToWeekdayIndex(horario.dia);
+      const weekday = getDiaSemanaIndex(horario.dia);
       const firstDate = getFirstOccurrenceOnOrAfter(semesterStart, weekday);
 
       const [startHourStr, startMinuteStr] = formatTime(
