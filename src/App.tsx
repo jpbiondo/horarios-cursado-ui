@@ -26,7 +26,7 @@ function App() {
     deleteProfile,
   } = useProfiles();
   const exportScheduleRef = useRef<HTMLDivElement | null>(null);
-  const { setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
