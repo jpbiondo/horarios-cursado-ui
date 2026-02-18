@@ -27,7 +27,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Label } from "./ui/label";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 
 interface ProfileSwitcherProps {
   profiles: Profile[];
@@ -136,11 +135,11 @@ export default function ProfileSwitcher({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Sheet open={manageOpen} onOpenChange={setManageOpen}>
-        <SheetContent side="bottom" className="h-[70vh] max-h-[32rem]">
-          <SheetHeader>
-            <SheetTitle>Perfiles</SheetTitle>
-          </SheetHeader>
+      <Dialog open={manageOpen} onOpenChange={setManageOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Perfiles</DialogTitle>
+          </DialogHeader>
           <div className="flex flex-col gap-2 overflow-y-auto py-4">
             {profiles.map((profile) => (
               <div
@@ -160,7 +159,7 @@ export default function ProfileSwitcher({
                     className="h-10 w-10 touch-manipulation"
                     aria-label="Renombrar"
                     onClick={() => {
-                      setManageOpen(false);
+                      // setManageOpen(false);
                       handleRename(profile);
                     }}
                   >
@@ -189,8 +188,8 @@ export default function ProfileSwitcher({
               </div>
             ))}
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={!!renameProfileState}
         onOpenChange={(open) => !open && handleRenameClose()}
