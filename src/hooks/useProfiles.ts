@@ -1,24 +1,32 @@
+import { SEMESTER_END } from "@/constants";
 import { MateriaByComisionDTO } from "@/types/MateriaByComisionDTO";
 import { Profile } from "@/types/Profile";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "horarios-profiles";
-const LEGACY_KEY = "materiasGuardadas";
 
 function loadProfiles(): {
   profiles: Profile[];
   activeProfileId: string | null;
   hadRecoveryError?: boolean;
+  hadSemesterExpired?: boolean;
 } {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
+    const now = Date.now();
+    const semesterEndMs = SEMESTER_END.getTime();
+
     if (stored) {
       const parsed = JSON.parse(stored) as {
         profiles: Profile[];
         activeProfileId: string | null;
       };
       if (Array.isArray(parsed.profiles) && parsed.profiles.length > 0) {
+        if (now > semesterEndMs) {
+          localStorage.removeItem(STORAGE_KEY);
+          return createDefaultState({ hadSemesterExpired: true });
+        }
         return {
           profiles: parsed.profiles,
           activeProfileId: parsed.activeProfileId ?? parsed.profiles[0].id,
@@ -26,37 +34,33 @@ function loadProfiles(): {
       }
     }
 
-    const legacy = localStorage.getItem(LEGACY_KEY);
-    let materias: MateriaByComisionDTO[] = [];
-    try {
-      materias = legacy ? JSON.parse(legacy) : [];
-    } catch {
-      localStorage.removeItem(LEGACY_KEY);
-    }
-    const defaultProfile: Profile = {
-      id: crypto.randomUUID(),
-      name: "Predeterminado",
-      materias,
-      createdAt: Date.now(),
-    };
-    return {
-      profiles: [defaultProfile],
-      activeProfileId: defaultProfile.id,
-    };
+    return createDefaultState();
   } catch {
     localStorage.removeItem(STORAGE_KEY);
-    const defaultProfile: Profile = {
-      id: crypto.randomUUID(),
-      name: "Predeterminado",
-      materias: [],
-      createdAt: Date.now(),
-    };
-    return {
-      profiles: [defaultProfile],
-      activeProfileId: defaultProfile.id,
-      hadRecoveryError: true,
-    };
+    return createDefaultState({ hadRecoveryError: true });
   }
+}
+
+function createDefaultState(flags?: {
+  hadRecoveryError?: boolean;
+  hadSemesterExpired?: boolean;
+}): {
+  profiles: Profile[];
+  activeProfileId: string | null;
+  hadRecoveryError?: boolean;
+  hadSemesterExpired?: boolean;
+} {
+  const defaultProfile: Profile = {
+    id: crypto.randomUUID(),
+    name: "Predeterminado",
+    materias: [],
+    createdAt: Date.now(),
+  };
+  return {
+    profiles: [defaultProfile],
+    activeProfileId: defaultProfile.id,
+    ...flags,
+  };
 }
 
 function saveProfiles(
@@ -81,6 +85,15 @@ export function useProfiles() {
       );
     }
   }, [state.hadRecoveryError]);
+
+  useEffect(() => {
+    if (state.hadSemesterExpired && !hasShownRecoveryToast.current) {
+      hasShownRecoveryToast.current = true;
+      toast.info(
+        "El semestre ha terminado. Se ha reiniciado tu horario para el nuevo ciclo.",
+      );
+    }
+  }, [state.hadSemesterExpired]);
 
   const persist = useCallback(
     (profiles: Profile[], activeProfileId: string | null) => {
