@@ -1,4 +1,4 @@
-import { CalendarIcon, ImageIcon, Share } from "lucide-react";
+import { ImageIcon, Share } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -12,14 +12,13 @@ import logo from "../assets/logo.png";
 interface NavbarProps {
   hasSelectedMaterias: boolean;
   onExportPng: () => void;
-  onExportIcs: () => void;
+  onExportIcs?: () => void;
   profileSwitcher?: React.ReactNode;
 }
 
 export default function Navbar({
   hasSelectedMaterias,
   onExportPng,
-  onExportIcs,
   profileSwitcher,
 }: NavbarProps) {
   return (
@@ -52,13 +51,13 @@ export default function Navbar({
                 <ImageIcon />
                 PNG
               </DropdownMenuItem>
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 onClick={onExportIcs}
                 disabled={!hasSelectedMaterias}
               >
                 <CalendarIcon />
                 ICS
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </nav>
