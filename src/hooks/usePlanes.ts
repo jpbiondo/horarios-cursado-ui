@@ -14,7 +14,7 @@ export const usePlanes = () => {
     try {
       if (!carreraId) {
         setPlanes([]);
-        setError("Error: No se proveyó ID de la carrera.");
+        setError("No se especificó la carrera");
         return;
       }
 
@@ -25,7 +25,7 @@ export const usePlanes = () => {
       if (err) throw err;
       setPlanes((data ?? []) as PlanFindAllDTO[]);
     } catch {
-      setError("Error fetching planes");
+      setError("Error al cargar los planes");
     } finally {
       setLoading(false);
     }

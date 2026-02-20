@@ -56,15 +56,34 @@ export default function BuscarMaterias({
 
   const [activeTab, setActiveTab] = useState<FilterValues>("byComision");
 
-  const { carreras, fetchCarreras, loading } = useCarreras();
-  const { planes, fetchPlanes } = usePlanes();
-  const { comisiones, fetchComisiones } = useComisiones();
-  const { materias, fetchMaterias } = useMaterias();
+  const { carreras, fetchCarreras, loading, error: carrerasError } =
+    useCarreras();
+  const { planes, fetchPlanes, error: planesError } = usePlanes();
+  const { comisiones, fetchComisiones, error: comisionesError } =
+    useComisiones();
+  const { materias, fetchMaterias, error: materiasError } = useMaterias();
   const {
     carreraMaterias,
     fetchCarreraMaterias,
     loading: searchLoading,
+    error: searchError,
   } = useCarreraMateriasFiltered();
+
+  useEffect(() => {
+    const err =
+      carrerasError ??
+      planesError ??
+      comisionesError ??
+      materiasError ??
+      searchError;
+    if (err) toast.error(err);
+  }, [
+    carrerasError,
+    planesError,
+    comisionesError,
+    materiasError,
+    searchError,
+  ]);
 
   useEffect(() => {
     fetchCarreras();

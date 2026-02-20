@@ -13,7 +13,7 @@ export const useComisiones = () => {
     try {
       if (!planId) {
         setComisiones([]);
-        setError("Error: No se proveyó ID del plan");
+        setError("No se especificó el plan");
         return;
       }
       const { data, error: err } = await supabase
@@ -22,9 +22,8 @@ export const useComisiones = () => {
         .eq("carrera_plan_id", planId);
       if (err) throw err;
       setComisiones((data ?? []) as ComisionFindAllDTO[]);
-      console.log(data);
     } catch {
-      setError("Error fetching comisiones");
+      setError("Error al cargar las comisiones");
     } finally {
       setLoading(false);
     }

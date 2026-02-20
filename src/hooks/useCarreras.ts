@@ -15,7 +15,7 @@ export const useCarreras = () => {
       if (err) throw err;
       setCarrera((data ?? []) as CarreraFindAllDTO[]);
     } catch {
-      setError("Error fetching subjects");
+      setError("Error al cargar las carreras");
     } finally {
       setLoading(false);
     }

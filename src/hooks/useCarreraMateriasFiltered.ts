@@ -83,7 +83,7 @@ export const useCarreraMateriasFiltered = () => {
         setCarreraMaterias(dtos);
       }
     } catch {
-      setError("Error fetching subjects");
+      setError("Error al buscar materias");
       setCarreraMaterias([]);
     } finally {
       setLoading(false);

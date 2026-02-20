@@ -13,7 +13,7 @@ export const useMaterias = () => {
     try {
       if (!planId) {
         setMaterias([]);
-        setError("Error: No se proveyó ID del plan");
+        setError("No se especificó el plan");
         return;
       }
       const { data, error: err } = await supabase
@@ -27,7 +27,7 @@ export const useMaterias = () => {
         .filter((m): m is { id: number; nombre: string } => m != null);
       setMaterias(materias as MateriaFindAllDTO[]);
     } catch {
-      setError("Error fetching materias");
+      setError("Error al cargar las materias");
     } finally {
       setLoading(false);
     }
