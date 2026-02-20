@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CURRENT_SEMESTRE_ID } from "../constants";
+import { CURRENT_SEMESTRE_ID, YEARLY_SEMESTER_ID } from "../constants";
 import { supabase } from "../lib/supabase";
 import type { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import type { CarreraMateriaComisionHorario } from "../types/Carrera";
@@ -54,7 +54,10 @@ export const useCarreraMateriasFiltered = () => {
           )
           .eq("carrera_plan_comision_id", comisionId!)
           .eq("carrera_plan_id", planId)
-          .eq("semestre_id", CURRENT_SEMESTRE_ID);
+          .or(
+            `semestre_id.eq.${CURRENT_SEMESTRE_ID},semestre_id.eq.${YEARLY_SEMESTER_ID}`,
+          );
+        console.log(rowsErr);
         if (rowsErr) throw rowsErr;
         const dtos: MateriaByComisionDTO[] = (rows ?? []).map((r: Row) => ({
           comisionNombre: r.carrera_plan_comision?.nombre ?? "",
@@ -73,7 +76,11 @@ export const useCarreraMateriasFiltered = () => {
           )
           .eq("materia_id", materiaId!)
           .eq("carrera_plan_id", planId)
-          .eq("semestre_id", CURRENT_SEMESTRE_ID);
+          .or(
+            `semestre_id.eq.${CURRENT_SEMESTRE_ID},semestre_id.eq.${YEARLY_SEMESTER_ID}`,
+          );
+
+        console.log(rowsErr);
         if (rowsErr) throw rowsErr;
         const dtos: MateriaByComisionDTO[] = (rows ?? []).map((r: Row) => ({
           comisionNombre: r.carrera_plan_comision?.nombre ?? "",

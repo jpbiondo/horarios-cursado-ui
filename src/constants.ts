@@ -9,3 +9,4 @@ export const SEMESTER_END = new Date(CURRENT_YEAR, 5, 26, 23, 59, 59); // 26 de 
 
 /** ID del semestre activo en la tabla semestre. Ajustar según tu base de datos. */
 export const CURRENT_SEMESTRE_ID = 1;
+export const YEARLY_SEMESTER_ID = 2;
