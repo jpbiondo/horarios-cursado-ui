@@ -118,7 +118,7 @@ export const parseCarreraMateriasToEvents = (
       "blue";
     for (const horario of materia.horarios) {
       events.push({
-        title: `${materia.materiaNombreAbrev ?? materia.materiaNombre} ${materia.comisionNombre}`,
+        title: `${materia.materiaNombreAbrev ? materia.materiaNombreAbrev : materia.materiaNombre} ${materia.comisionNombre}`,
         desc: `${materia.materiaNombre} ${materia.comisionNombre}`,
         startHour: horario.horaDesde.substring(0, 5),
         endHour: horario.horaHasta.substring(0, 5),
