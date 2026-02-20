@@ -98,12 +98,12 @@ export default function SelectedMateriasList({
         </div>
         {/* fade indicators on edges */}
         <div
-          className={`pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-accent to-transparent transition-opacity duration-200 ${
+          className={`pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-primary-foreground to-transparent transition-opacity duration-200 ${
             showLeftFade ? "opacity-100" : "opacity-0"
           }`}
         />
         <div
-          className={`pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-accent to-transparent transition-opacity duration-200 ${
+          className={`pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-primary-foreground to-transparent transition-opacity duration-200 ${
             showRightFade ? "opacity-100" : "opacity-0"
           }`}
         />
