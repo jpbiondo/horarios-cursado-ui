@@ -3,7 +3,7 @@ import { Clock, Loader2, Plus, Search } from "lucide-react";
 import { useCarreras } from "../hooks/useCarreras";
 import { usePlanes } from "../hooks/usePlanes";
 import { useComisiones } from "../hooks/useComisiones";
-import { useCarreraMateriasFilteredByComision } from "../hooks/useCarreraMateriasFilteredByComision";
+import { useCarreraMateriasFiltered } from "../hooks/useCarreraMateriasFiltered";
 import { formatCompactSchedule, haySuperposicionHorarios } from "../lib/utils";
 import { CarreraFindAllDTO } from "../types/CarreraFindAllDTO";
 import { ComisionFindAllDTO } from "../types/ComisionFindAllDTO";
@@ -28,12 +28,17 @@ import {
 } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { MateriaFindAllDTO } from "@/types/MateriaFindAllDTO";
+import { useMaterias } from "@/hooks/useMaterias";
 
 export interface BuscarMateriasProps {
   selectedMaterias: MateriaByComisionDTO[];
   pushToMateriasSeleccionadas: (nuevaMateria: MateriaByComisionDTO) => void;
   variant?: "card" | "inline";
 }
+
+type FilterValues = "byComision" | "byMateria";
 
 export default function BuscarMaterias({
   selectedMaterias,
@@ -45,13 +50,21 @@ export default function BuscarMaterias({
   const [selectedCarrera, setSelectedCarrera] = useState<CarreraFindAllDTO>();
   const [selectedPlan, setSelectedPlan] = useState<PlanFindAllDTO>();
   const [selectedComision, setSelectedComision] =
-    useState<ComisionFindAllDTO>();
+    useState<ComisionFindAllDTO | null>(null);
+  const [selectedMateria, setSelectedMateria] =
+    useState<MateriaFindAllDTO | null>(null);
+
+  const [activeTab, setActiveTab] = useState<FilterValues>("byComision");
 
   const { carreras, fetchCarreras, loading } = useCarreras();
   const { planes, fetchPlanes } = usePlanes();
   const { comisiones, fetchComisiones } = useComisiones();
-  const { carreraMaterias, fetchCarreraMaterias, loading: searchLoading } =
-    useCarreraMateriasFilteredByComision();
+  const { materias, fetchMaterias } = useMaterias();
+  const {
+    carreraMaterias,
+    fetchCarreraMaterias,
+    loading: searchLoading,
+  } = useCarreraMateriasFiltered();
 
   useEffect(() => {
     fetchCarreras();
@@ -73,19 +86,46 @@ export default function BuscarMaterias({
   const handleValueChangePlan = (planValue: string) => {
     const selectedPlanId = Number(planValue);
     setSelectedPlan(planes?.filter((plan) => plan.id === selectedPlanId)[0]);
-    fetchComisiones(selectedPlanId);
+
+    if (activeTab === "byComision") {
+      fetchComisiones(selectedPlanId);
+      return;
+    }
+
+    fetchMaterias(selectedPlanId);
   };
 
   const handleValueChangeComision = (comisionValue: string) => {
     const selectedComisionId = Number(comisionValue);
     setSelectedComision(
-      comisiones?.filter((comision) => comision.id == selectedComisionId)[0],
+      comisiones?.filter((comision) => comision.id === selectedComisionId)[0] ||
+        null,
+    );
+  };
+
+  const handleValueChangeMateria = (materiaValue: string) => {
+    const selectedMateriaId = Number(materiaValue);
+    setSelectedMateria(
+      materias?.filter((materia) => materia.id === selectedMateriaId)[0] ||
+        null,
     );
   };
 
   const handleClickSearch = () => {
-    if (!selectedComision) return;
-    fetchCarreraMaterias(selectedComision.id);
+    if (!selectedPlan) return;
+    if (activeTab === "byComision") {
+      if (!selectedComision) return;
+      fetchCarreraMaterias(activeTab, selectedPlan?.id, selectedComision.id);
+      return;
+    }
+
+    if (!selectedMateria) return;
+    fetchCarreraMaterias(
+      activeTab,
+      selectedPlan?.id,
+      undefined,
+      selectedMateria.id,
+    );
   };
 
   const handleAddCarreraMateria = (carreraMateria: MateriaByComisionDTO) => {
@@ -96,6 +136,23 @@ export default function BuscarMaterias({
       return;
     }
     pushToMateriasSeleccionadas(carreraMateria);
+  };
+
+  const handleFiltradoChange = (value: string) => {
+    setActiveTab(value as FilterValues);
+    setSelectedMateria(null);
+    setSelectedComision(null);
+
+    const selectedPlanId = selectedPlan?.id;
+
+    if (!value || !selectedPlanId) return;
+
+    if (value === "byComision") {
+      fetchComisiones(selectedPlanId);
+      return;
+    }
+
+    fetchMaterias(selectedPlanId);
   };
 
   const materiaYaSeleccionada = (
@@ -154,32 +211,64 @@ export default function BuscarMaterias({
             </SelectContent>
           </Select>
         </div>
+        <Tabs
+          value={activeTab}
+          className="grid gap-3"
+          onValueChange={handleFiltradoChange}
+        >
+          <TabsList className="w-full">
+            <TabsTrigger value="byComision">Por Comisión</TabsTrigger>
+            <TabsTrigger value="byMateria">Por Materia</TabsTrigger>
+          </TabsList>
+          <TabsContent value="byComision">
+            <div className="grid gap-3">
+              <Label>Comisiones</Label>
+              <Select
+                name="selectedComision"
+                onValueChange={handleValueChangeComision}
+              >
+                <SelectTrigger className="w-full truncate">
+                  <SelectValue placeholder="Seleccione una comisión" />
+                </SelectTrigger>
+                <SelectContent>
+                  {comisiones?.map((comision) => (
+                    <SelectItem key={comision.id} value={String(comision.id)}>
+                      {comision.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsContent>
+          <TabsContent value="byMateria">
+            <div className="grid gap-3">
+              <Label>Materias</Label>
+              <Select
+                name="selectedMateria"
+                onValueChange={handleValueChangeMateria}
+              >
+                <SelectTrigger className="w-full truncate">
+                  <SelectValue placeholder="Seleccione una materia" />
+                </SelectTrigger>
+                <SelectContent>
+                  {materias?.map((materia) => (
+                    <SelectItem key={materia.id} value={String(materia.id)}>
+                      {materia.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsContent>
+        </Tabs>
 
-        <div className="grid gap-3">
-          <Label>Comisiones</Label>
-          <Select
-            name="selectedComision"
-            onValueChange={handleValueChangeComision}
-          >
-            <SelectTrigger className="w-full truncate">
-              <SelectValue placeholder="Seleccione una comisión" />
-            </SelectTrigger>
-            <SelectContent>
-              {comisiones?.map((comision) => (
-                <SelectItem key={comision.id} value={String(comision.id)}>
-                  {comision.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
         <Button
           variant="default"
           disabled={
             !selectedCarrera ||
             !selectedPlan ||
-            !selectedComision ||
-            searchLoading
+            searchLoading ||
+            (activeTab === "byComision" ? !selectedComision : !selectedMateria)
           }
           onClick={handleClickSearch}
         >
