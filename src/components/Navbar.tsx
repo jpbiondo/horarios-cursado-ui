@@ -26,7 +26,7 @@ export default function Navbar({
     <header className="z-10 flex-shrink-0 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 items-center justify-between gap-2 px-1 sm:px-4">
         <div className="flex items-center gap-1">
-          <img src={logo} className="block h-26 dark:invert" />
+          <img src={logo} className="block h-14 dark:invert" />
         </div>
 
         <nav className="flex shrink-0 items-center gap-2">
