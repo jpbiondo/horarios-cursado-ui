@@ -1,4 +1,4 @@
-import { ImageIcon, Share } from "lucide-react";
+import { CropIcon, ImageIcon, Share } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import logo from "../assets/logo.png";
 
 interface NavbarProps {
   hasSelectedMaterias: boolean;
-  onExportPng: () => void;
+  onExportPng: (strategy: string) => void;
   onExportIcs?: () => void;
   profileSwitcher?: React.ReactNode;
 }
@@ -45,11 +45,18 @@ export default function Navbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={onExportPng}
+                onClick={() => onExportPng("recortado")}
+                disabled={!hasSelectedMaterias}
+              >
+                <CropIcon />
+                PNG Recortado
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onExportPng("completo")}
                 disabled={!hasSelectedMaterias}
               >
                 <ImageIcon />
-                PNG
+                PNG Completo
               </DropdownMenuItem>
               {/* <DropdownMenuItem
                 onClick={onExportIcs}

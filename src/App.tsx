@@ -25,7 +25,8 @@ function App() {
     duplicateProfile,
     deleteProfile,
   } = useProfiles();
-  const exportScheduleRef = useRef<HTMLDivElement | null>(null);
+  const exportScheduleRefFull = useRef<HTMLDivElement | null>(null);
+  const exportScheduleRefCropped = useRef<HTMLDivElement | null>(null);
   const { resolvedTheme } = useTheme();
 
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
@@ -61,11 +62,15 @@ function App() {
     return Math.max(...hours) + 1 - (exportStartHour ?? 8);
   }, [materiasSeleccionadas, exportStartHour]);
 
-  const handleExportPng = async () => {
+  const handleExportPng = async (strategy: string) => {
     if (!hasSelectedMaterias) return;
-    if (!exportScheduleRef.current) return;
+    const ref =
+      strategy === "completo"
+        ? exportScheduleRefFull
+        : exportScheduleRefCropped;
+    if (!ref.current) return;
     try {
-      const dataUrl = await toPng(exportScheduleRef.current, {
+      const dataUrl = await toPng(ref.current, {
         cacheBust: true,
         backgroundColor: resolvedTheme === "light" ? "#FFFFFF" : "#121212",
         pixelRatio: 2,
@@ -165,11 +170,22 @@ function App() {
           <div className="absolute -left-[99999px] top-0">
             <WeeklySchedule
               selectedMaterias={materiasSeleccionadas}
-              containerRef={exportScheduleRef}
+              containerRef={exportScheduleRefCropped}
               hideCurrentTimeIndicator
               hideTodayHighlight
               startHourOverride={exportStartHour}
               offsetHourOverride={exportOffsetHour}
+              heightInRem={3}
+            />
+          </div>
+        )}
+        {hasSelectedMaterias && (
+          <div className="absolute -left-[99999px] top-0">
+            <WeeklySchedule
+              selectedMaterias={materiasSeleccionadas}
+              containerRef={exportScheduleRefFull}
+              hideCurrentTimeIndicator
+              hideTodayHighlight
               heightInRem={3}
             />
           </div>
