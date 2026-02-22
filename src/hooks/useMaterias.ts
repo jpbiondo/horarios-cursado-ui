@@ -24,7 +24,8 @@ export const useMaterias = () => {
       if (err) throw err;
       const materias = (data ?? [])
         .map((row) => row.materia)
-        .filter((m): m is { id: number; nombre: string } => m != null);
+        .filter((m): m is { id: number; nombre: string } => m != null)
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
       setMaterias(materias as MateriaFindAllDTO[]);
     } catch {
       setError("Error al cargar las materias");
