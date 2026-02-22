@@ -46,6 +46,21 @@ function App() {
     return Math.min(...hours);
   }, [materiasSeleccionadas]);
 
+  const exportOffsetHour = useMemo(() => {
+    if (!materiasSeleccionadas.length) return undefined;
+    const hours: number[] = [];
+    materiasSeleccionadas.forEach((materia) => {
+      materia.horarios.forEach((horario) => {
+        const hour = Number(horario.horaHasta.substring(0, 2));
+        if (!Number.isNaN(hour)) {
+          hours.push(hour);
+        }
+      });
+    });
+    if (!hours.length) return undefined;
+    return Math.max(...hours) + 1 - (exportStartHour ?? 8);
+  }, [materiasSeleccionadas, exportStartHour]);
+
   const handleExportPng = async () => {
     if (!hasSelectedMaterias) return;
     if (!exportScheduleRef.current) return;
@@ -154,6 +169,7 @@ function App() {
               hideCurrentTimeIndicator
               hideTodayHighlight
               startHourOverride={exportStartHour}
+              offsetHourOverride={exportOffsetHour}
               heightInRem={3}
             />
           </div>

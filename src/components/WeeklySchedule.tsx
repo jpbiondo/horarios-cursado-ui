@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { CalendarSearch } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import { WEEKDAYS } from "../constants";
+import { DAY_HOURS, WEEKDAYS } from "../constants";
 import {
   getDifferenceInHours,
   getHours,
@@ -24,6 +24,7 @@ interface WeeklyScheduleProps {
   hideCurrentTimeIndicator?: boolean;
   hideTodayHighlight?: boolean;
   startHourOverride?: number;
+  offsetHourOverride?: number;
   heightInRem?: number;
 }
 const WeeklySchedule = ({
@@ -32,6 +33,7 @@ const WeeklySchedule = ({
   hideCurrentTimeIndicator,
   hideTodayHighlight,
   startHourOverride,
+  offsetHourOverride,
   heightInRem = 2.5,
 }: WeeklyScheduleProps) => {
   const [currentTime, setCurrentTime] = useState(format(new Date(), "HH:mm"));
@@ -58,9 +60,12 @@ const WeeklySchedule = ({
     (Number(format(currentTimeDate, "mm")) / 60) * 100;
 
   const effectiveStartHour = startHourOverride ?? 8;
+  const effectiveOffsetHour =
+    offsetHourOverride ?? DAY_HOURS - effectiveStartHour + 1;
   const hours = useMemo(
-    () => getHours({ startHour: effectiveStartHour }),
-    [effectiveStartHour],
+    () =>
+      getHours({ startHour: effectiveStartHour, offset: effectiveOffsetHour }),
+    [effectiveStartHour, effectiveOffsetHour],
   );
 
   useEffect(() => {
