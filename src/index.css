@@ -2,6 +2,27 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Lock viewport scroll on iOS - only the schedule area should scroll */
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* 100dvh = dynamic viewport height (fixes iOS address bar); 100vh fallback */
+.app-root {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* iOS: momentum scrolling + prevent scroll chaining to viewport */
+.schedule-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

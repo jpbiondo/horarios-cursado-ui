@@ -113,7 +113,7 @@ function App() {
   };
 
   return (
-    <div className="bg-base-200 h-screen flex flex-col overflow-hidden relative">
+    <div className="app-root bg-base-200 min-h-0 flex flex-col overflow-hidden relative">
       <Navbar
         hasSelectedMaterias={hasSelectedMaterias}
         onExportPng={handleExportPng}
@@ -145,7 +145,7 @@ function App() {
           deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
         />
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
-          <div className="flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto">
+          <div className="schedule-scroll flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto touch-pan-y">
             <div className="hidden md:block">
               <WeeklySchedule
                 selectedMaterias={materiasSeleccionadas}
