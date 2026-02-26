@@ -4,6 +4,7 @@ import ProfileSwitcher from "./components/ProfileSwitcher";
 import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
 import WeeklySchedule from "./components/WeeklySchedule";
+import MobileWeeklySchedule from "./components/MobileWeeklySchedule";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
@@ -145,10 +146,15 @@ function App() {
         />
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto">
-            <WeeklySchedule
-              selectedMaterias={materiasSeleccionadas}
-              heightInRem={3}
-            />
+            <div className="hidden md:block">
+              <WeeklySchedule
+                selectedMaterias={materiasSeleccionadas}
+                heightInRem={3}
+              />
+            </div>
+            <div className="lg:hidden px-4 pt-4">
+              <MobileWeeklySchedule selectedMaterias={materiasSeleccionadas} />
+            </div>
             <div className="fixed bottom-0 z-10 w-full border-t border-border"></div>
           </div>
           <aside className="w-80 min-w-80 flex-shrink-0 flex-col border-r border-border bg-background overflow-hidden hidden lg:flex">

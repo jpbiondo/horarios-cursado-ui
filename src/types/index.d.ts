@@ -5,6 +5,7 @@ declare interface CalendarEvent {
   endHour: string;
   day: string;
   color: string;
+  comisionNombre?: string;
 }
 
 declare interface Subject {

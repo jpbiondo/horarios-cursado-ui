@@ -124,6 +124,7 @@ export const parseCarreraMateriasToEvents = (
         endHour: horario.horaHasta.substring(0, 5),
         day: getAbreviacionDia(horario.dia),
         color,
+        comisionNombre: materia.comisionNombre,
       });
     }
   }
