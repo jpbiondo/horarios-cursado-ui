@@ -47,12 +47,12 @@ export default function SelectedMateriasList({
   };
 
   return (
-    <div className="flex-shrink-0 z-20 w-full flex flex-row items-center bg-primary-foreground p-1 min-h-12">
+    <div className="flex-shrink-0 z-20 w-full overflow-hidden flex flex-row items-center bg-primary-foreground p-1 min-h-12">
       <div className="relative flex-1 min-w-0">
         <div
           ref={scrollRef}
           onScroll={updateFadeState}
-          className="flex flex-row h-full items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-hide"
+          className="scrollbar-thin flex flex-row h-full items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth min-w-0"
         >
           {selectedMaterias.length === 0 ? (
             <span className="text-sm text-muted-foreground flex-shrink-0">
