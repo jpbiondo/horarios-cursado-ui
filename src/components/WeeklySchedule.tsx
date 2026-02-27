@@ -82,7 +82,7 @@ const WeeklySchedule = ({
     return (
       <div
         ref={containerRef}
-        className="flex h-full min-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/20 py-16"
+        className="flex h-full min-w-full flex-col items-center justify-center gap-3 border border-dashed border-border bg-muted/20 py-16"
       >
         <CalendarSearch className="size-12 text-muted-foreground" />
         <div className="space-y-1 text-center">

@@ -19,8 +19,9 @@ function toHorario(h: {
 }
 
 export const useCarreraMateriasFiltered = () => {
-  const [carreraMaterias, setCarreraMaterias] =
-    useState<MateriaByComisionDTO[]>();
+  const [carreraMaterias, setCarreraMaterias] = useState<
+    MateriaByComisionDTO[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +34,6 @@ export const useCarreraMateriasFiltered = () => {
     try {
       setLoading(true);
       setError(null);
-
       type Row = {
         id: number;
         materia_id: number | null;
@@ -57,7 +57,6 @@ export const useCarreraMateriasFiltered = () => {
           .or(
             `semestre_id.eq.${CURRENT_SEMESTRE_ID},semestre_id.eq.${YEARLY_SEMESTER_ID}`,
           );
-        console.log(rowsErr);
         if (rowsErr) throw rowsErr;
         const dtos: MateriaByComisionDTO[] = (rows ?? []).map((r: Row) => ({
           comisionNombre: r.carrera_plan_comision?.nombre ?? "",

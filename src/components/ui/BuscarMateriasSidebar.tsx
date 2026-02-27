@@ -13,6 +13,9 @@ import BuscarMaterias from "../BuscarMaterias";
 interface BuscarMateriasSidebarProps {
   selectedMaterias: MateriaByComisionDTO[];
   pushToMateriasSeleccionadas: (nuevaMateria: MateriaByComisionDTO) => void;
+  pushManyToMateriasSeleccionadas: (
+    nuevasMaterias: MateriaByComisionDTO[],
+  ) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -20,6 +23,7 @@ interface BuscarMateriasSidebarProps {
 export default function BuscarMateriasSidebar({
   selectedMaterias,
   pushToMateriasSeleccionadas,
+  pushManyToMateriasSeleccionadas,
   open,
   onOpenChange,
 }: BuscarMateriasSidebarProps) {
@@ -35,7 +39,7 @@ export default function BuscarMateriasSidebar({
         <CalendarSearch className="size-5" />
       </Button>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="right">
+        <SheetContent side="right" forceMount={true}>
           <SheetHeader>
             <SheetTitle>Buscar materias</SheetTitle>
             <SheetDescription>
@@ -45,6 +49,7 @@ export default function BuscarMateriasSidebar({
           <BuscarMaterias
             variant="inline"
             selectedMaterias={selectedMaterias}
+            pushManyToMateriasSeleccionadas={pushManyToMateriasSeleccionadas}
             pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
           />
         </SheetContent>

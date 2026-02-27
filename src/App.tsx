@@ -18,6 +18,7 @@ function App() {
     activeProfile,
     materiasSeleccionadas,
     pushToMateriasSeleccionadas,
+    pushManyToMateriasSeleccionadas,
     popFromMateriasSeleccionadas,
     deleteAllMateriasSeleccionadas,
     setActiveProfile,
@@ -113,7 +114,7 @@ function App() {
   };
 
   return (
-    <div className="app-root bg-base-200 min-h-0 flex flex-col overflow-hidden relative">
+    <div className="app-root bg-base-200 min-h-0 h-full flex flex-col overflow-hidden relative">
       <Navbar
         hasSelectedMaterias={hasSelectedMaterias}
         onExportPng={handleExportPng}
@@ -134,6 +135,7 @@ function App() {
       <BuscarMateriasSidebar
         selectedMaterias={materiasSeleccionadas}
         pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
+        pushManyToMateriasSeleccionadas={pushManyToMateriasSeleccionadas}
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
       />
@@ -146,13 +148,13 @@ function App() {
         />
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="schedule-scroll flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto touch-pan-y">
-            <div className="hidden md:block">
+            <div className="hidden md:block flex-1">
               <WeeklySchedule
                 selectedMaterias={materiasSeleccionadas}
                 heightInRem={3}
               />
             </div>
-            <div className="lg:hidden px-4 pt-4">
+            <div className="md:hidden px-4 pt-4 flex-1">
               <MobileWeeklySchedule selectedMaterias={materiasSeleccionadas} />
             </div>
             <div className="fixed bottom-0 z-10 w-full border-t border-border"></div>
@@ -167,6 +169,7 @@ function App() {
             <BuscarMaterias
               variant="inline"
               selectedMaterias={materiasSeleccionadas}
+              pushManyToMateriasSeleccionadas={pushManyToMateriasSeleccionadas}
               pushToMateriasSeleccionadas={pushToMateriasSeleccionadas}
             />
           </aside>

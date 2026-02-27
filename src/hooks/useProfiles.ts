@@ -134,6 +134,13 @@ export function useProfiles() {
     [updateActiveProfileMaterias],
   );
 
+  const pushManyToMateriasSeleccionadas = useCallback(
+    (nuevasMaterias: MateriaByComisionDTO[]) => {
+      updateActiveProfileMaterias((prev) => [...prev, ...nuevasMaterias]);
+    },
+    [updateActiveProfileMaterias],
+  );
+
   const popFromMateriasSeleccionadas = useCallback(
     (materia: MateriaByComisionDTO) => {
       updateActiveProfileMaterias((prev) =>
@@ -224,6 +231,7 @@ export function useProfiles() {
     profiles: state.profiles,
     activeProfile,
     materiasSeleccionadas,
+    pushManyToMateriasSeleccionadas,
     pushToMateriasSeleccionadas,
     popFromMateriasSeleccionadas,
     deleteAllMateriasSeleccionadas,

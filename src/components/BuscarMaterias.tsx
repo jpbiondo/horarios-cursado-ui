@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, Loader2, Plus, Search } from "lucide-react";
+import { Clock, Loader2, Plus, PlusIcon, Search } from "lucide-react";
 import { useCarreras } from "../hooks/useCarreras";
 import { usePlanes } from "../hooks/usePlanes";
 import { useComisiones } from "../hooks/useComisiones";
@@ -35,6 +35,9 @@ import { useMaterias } from "@/hooks/useMaterias";
 export interface BuscarMateriasProps {
   selectedMaterias: MateriaByComisionDTO[];
   pushToMateriasSeleccionadas: (nuevaMateria: MateriaByComisionDTO) => void;
+  pushManyToMateriasSeleccionadas: (
+    nuevasMaterias: MateriaByComisionDTO[],
+  ) => void;
   variant?: "card" | "inline";
 }
 
@@ -43,6 +46,7 @@ type FilterValues = "byComision" | "byMateria";
 export default function BuscarMaterias({
   selectedMaterias,
   pushToMateriasSeleccionadas,
+  pushManyToMateriasSeleccionadas,
   variant = "card",
 }: BuscarMateriasProps) {
   const [materiasSeleccionables, setMateriasSeleccionables] =
@@ -56,11 +60,18 @@ export default function BuscarMaterias({
 
   const [activeTab, setActiveTab] = useState<FilterValues>("byComision");
 
-  const { carreras, fetchCarreras, loading, error: carrerasError } =
-    useCarreras();
+  const {
+    carreras,
+    fetchCarreras,
+    loading,
+    error: carrerasError,
+  } = useCarreras();
   const { planes, fetchPlanes, error: planesError } = usePlanes();
-  const { comisiones, fetchComisiones, error: comisionesError } =
-    useComisiones();
+  const {
+    comisiones,
+    fetchComisiones,
+    error: comisionesError,
+  } = useComisiones();
   const { materias, fetchMaterias, error: materiasError } = useMaterias();
   const {
     carreraMaterias,
@@ -77,13 +88,7 @@ export default function BuscarMaterias({
       materiasError ??
       searchError;
     if (err) toast.error(err);
-  }, [
-    carrerasError,
-    planesError,
-    comisionesError,
-    materiasError,
-    searchError,
-  ]);
+  }, [carrerasError, planesError, comisionesError, materiasError, searchError]);
 
   useEffect(() => {
     fetchCarreras();
@@ -155,6 +160,35 @@ export default function BuscarMaterias({
       return;
     }
     pushToMateriasSeleccionadas(carreraMateria);
+  };
+
+  const handleAddAllCarreraMaterias = () => {
+    if (!materiasSeleccionables || materiasSeleccionables?.length === 0) return;
+
+    const accumulated: MateriaByComisionDTO[] = [...selectedMaterias];
+    const materiasValidasSeleccionables: MateriaByComisionDTO[] = [];
+    let haySuperPoisicionHorario = false;
+
+    for (const materiaSeleccionable of materiasSeleccionables) {
+      if (materiaYaSeleccionada(materiaSeleccionable, selectedMaterias))
+        continue;
+
+      if (haySuperposicionHorarios(materiaSeleccionable, accumulated)) {
+        haySuperPoisicionHorario = true;
+        continue;
+      }
+
+      accumulated.push(materiaSeleccionable);
+      materiasValidasSeleccionables.push(materiaSeleccionable);
+    }
+
+    if (haySuperPoisicionHorario) {
+      toast.error(
+        `Alguna/s materia/s no se pudieron añadir debido a que había superposición mayor a 45mins con las materias seleccionadas.`,
+      );
+    }
+
+    pushManyToMateriasSeleccionadas(materiasValidasSeleccionables);
   };
 
   const handleFiltradoChange = (value: string) => {
@@ -302,9 +336,21 @@ export default function BuscarMaterias({
 
       {materiasSeleccionables && materiasSeleccionables.length > 0 && (
         <div className="px-1 flex-1 min-h-0 flex flex-col">
-          <h3 className="px-3 mb-3 text-md font-semibold leading-none flex-shrink-0">
-            Materias disponibles
-          </h3>
+          <div className="flex flex-row items-center justify-between mb-3">
+            <h3 className="pl-3 text-sm font-semibold leading-none flex-shrink-0">
+              Resultados
+            </h3>
+
+            <Button
+              variant="link"
+              size="sm"
+              className="cursor-pointer"
+              onClick={handleAddAllCarreraMaterias}
+            >
+              <PlusIcon />
+              Añadir todo
+            </Button>
+          </div>
           <div className="flex-1 min-h-0 overflow-auto">
             {materiasSeleccionables.map((carreraMateria) => {
               const yaSeleccionada = materiaYaSeleccionada(
