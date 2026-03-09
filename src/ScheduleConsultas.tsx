@@ -75,11 +75,13 @@ function ScheduleConsultas() {
       />
 
       <main className="w-full max-w-full mx-auto flex-1 min-h-0 flex flex-col relative">
-        {/* <SelectedMateriasList
-          selectedMaterias={materiasSeleccionadas}
-          popFromMateriasSeleccionadas={popFromMateriasSeleccionadas}
-          deleteAllMateriasSeleccionadas={deleteAllMateriasSeleccionadas}
-        /> */}
+        <div className="flex-shrink-0 z-20 w-full overflow-hidden flex flex-row justify-center items-center bg-primary-foreground p-2 min-h-12 borber-b border-border">
+          <span className="text-md md:text-lg font-semibold text-center uppercase tracking-wide">
+            {params.nombre
+              ? `Horarios consulta de ${params.nombre}`
+              : "Horarios de consulta"}
+          </span>
+        </div>
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="schedule-scroll flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto touch-pan-y">
             <div className="flex-1 px-4 pt-4 md:px-0 md:pt-0">
