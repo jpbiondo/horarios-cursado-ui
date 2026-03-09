@@ -1,6 +1,7 @@
 import { CalendarSearch } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { EVENT_COLOR_CLASSES, parseConsultasToEvents } from "../lib/utils";
 import { Badge } from "./ui/badge";
 import { Consulta } from "@/types/Consulta";
@@ -49,6 +50,11 @@ export default function WeeklyConsultas({
 
   const isEmpty = !selectedConsultas?.length;
 
+  const isMd = useMediaQuery("(min-width: 768px)");
+  const daysToShow = isMd
+    ? WEEKDAYS.slice(0, -1)
+    : WEEKDAYS.filter((dayKey) => (eventsByDay.get(dayKey)?.length ?? 0) > 0);
+
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
     setEventDialogOpen(true);
@@ -63,10 +69,10 @@ export default function WeeklyConsultas({
         <CalendarSearch className="size-12 text-muted-foreground" />
         <div className="space-y-1 text-center">
           <p className="font-medium text-foreground">
-            No hay materias seleccionadas
+            No hay consultas seleccionadas
           </p>
           <p className="text-sm text-muted-foreground">
-            Busca materias en el panel lateral para ver las consultas
+            Busca consultas en el panel lateral
           </p>
         </div>
       </div>
@@ -78,7 +84,7 @@ export default function WeeklyConsultas({
       ref={containerRef}
       className="flex flex-col md:flex-row gap-6 md:gap-0 pb-4"
     >
-      {WEEKDAYS.map((dayKey, i) => {
+      {daysToShow.map((dayKey, i) => {
         const dayEvents = eventsByDay.get(dayKey) ?? [];
         const dayLabel = DAY_LABELS[dayKey] ?? dayKey.toUpperCase();
         // const isToday = !hideTodayHighlight && index === todayIndex;
@@ -154,7 +160,7 @@ export default function WeeklyConsultas({
                 })}
               </div>
             </section>
-            {i < WEEKDAYS.length - 1 && (
+            {i < daysToShow.length - 1 && (
               <div
                 className="md:block w-px self-stretch shrink-0 bg-border hidden"
                 role="separator"

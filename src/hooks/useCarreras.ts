@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { CarreraFindAllDTO } from "../types/CarreraFindAllDTO";
 
@@ -7,11 +7,13 @@ export const useCarreras = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCarreras = async () => {
+  const fetchCarreras = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: err } = await supabase.from("carrera").select("id, nombre");
+      const { data, error: err } = await supabase
+        .from("carrera")
+        .select("id, nombre");
       if (err) throw err;
       setCarrera((data ?? []) as CarreraFindAllDTO[]);
     } catch {
@@ -19,7 +21,7 @@ export const useCarreras = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return { carreras, fetchCarreras, loading, error };
 };

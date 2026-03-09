@@ -82,7 +82,7 @@ function ScheduleConsultas() {
         /> */}
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="schedule-scroll flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto touch-pan-y">
-            <div className="block flex-1">
+            <div className="flex-1 px-4 pt-4 md:px-0 md:pt-0">
               <WeeklyConsultas selectedConsultas={selectedConsultas} />
             </div>
 
