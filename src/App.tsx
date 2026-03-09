@@ -1,15 +1,15 @@
 import { useMemo, useRef, useState } from "react";
 import Navbar from "./components/Navbar";
+import NavbarExportMenu from "./components/NavbarExportMenu";
 import ProfileSwitcher from "./components/ProfileSwitcher";
-import BuscarMateriasSidebar from "./components/ui/BuscarMateriasSidebar";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
+import BuscarMateriasSidebar from "./components/BuscarMateriasSidebar";
 import BuscarMaterias from "./components/BuscarMaterias";
 import WeeklySchedule from "./components/WeeklySchedule";
 import MobileWeeklySchedule from "./components/MobileWeeklySchedule";
 import SelectedMateriasList from "./components/SelectedMateriasList";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
-import { SEMESTER_START } from "./constants";
-import { buildIcsFromMaterias } from "./lib/utils";
 import { useProfiles } from "./hooks/useProfiles";
 import { useTheme } from "next-themes";
 function App() {
@@ -89,46 +89,26 @@ function App() {
     }
   };
 
-  const handleExportIcs = () => {
-    if (!hasSelectedMaterias) return;
-
-    const icsContent = buildIcsFromMaterias(
-      materiasSeleccionadas,
-      SEMESTER_START,
-    );
-
-    if (!icsContent) return;
-
-    const blob = new Blob([icsContent], {
-      type: "text/calendar;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "horario-utn.ics";
-    link.click();
-
-    URL.revokeObjectURL(url);
-    toast.success("Calendario ICS exportado");
-  };
-
   return (
     <div className="app-root bg-base-200 min-h-0 h-full flex flex-col overflow-hidden relative">
       <Navbar
-        hasSelectedMaterias={hasSelectedMaterias}
-        onExportPng={handleExportPng}
-        onExportIcs={handleExportIcs}
-        profileSwitcher={
-          <ProfileSwitcher
-            profiles={profiles}
-            activeProfile={activeProfile}
-            onSelectProfile={setActiveProfile}
-            onCreateProfile={createProfile}
-            onRenameProfile={renameProfile}
-            onDuplicateProfile={duplicateProfile}
-            onDeleteProfile={deleteProfile}
-          />
+        rightContent={
+          <>
+            <ThemeToggle />
+            <ProfileSwitcher
+              profiles={profiles}
+              activeProfile={activeProfile}
+              onSelectProfile={setActiveProfile}
+              onCreateProfile={createProfile}
+              onRenameProfile={renameProfile}
+              onDuplicateProfile={duplicateProfile}
+              onDeleteProfile={deleteProfile}
+            />
+            <NavbarExportMenu
+              hasSelectedMaterias={hasSelectedMaterias}
+              onExportPng={handleExportPng}
+            />
+          </>
         }
       />
 
