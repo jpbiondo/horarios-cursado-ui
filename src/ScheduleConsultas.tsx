@@ -61,7 +61,7 @@ function ScheduleConsultas() {
               className="gap-2"
             >
               <Copy className="size-4" />
-              Copiar
+              Copiar link
             </Button>
             <ThemeToggle />
           </>
