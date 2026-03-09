@@ -161,7 +161,7 @@ export default function BuscarConsultas({
           onClick={handleClickSearch}
         >
           <Search />
-          Buscar materias
+          Buscar consultas
         </Button>
       </div>
     </div>
