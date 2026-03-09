@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
 import Navbar from "./components/Navbar";
+import { Button } from "./components/ui/button";
 import { ThemeToggle } from "./components/ui/ThemeToggle";
 import { useParams } from "react-router";
 import WeeklyConsultas from "./components/WeeklyConsultas";
@@ -37,9 +40,33 @@ function ScheduleConsultas() {
       setSelectedConsultas(consultas);
     }
   }, [params.modo, params.nombre, consultas]);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Enlace copiado al portapapeles");
+    } catch {
+      toast.error("No se pudo copiar el enlace");
+    }
+  };
+
   return (
     <div className="app-root bg-base-200 min-h-0 h-full flex flex-col overflow-hidden relative">
-      <Navbar rightContent={<ThemeToggle />} />
+      <Navbar
+        rightContent={
+          <>
+            <Button
+              variant="outline"
+              onClick={handleCopyLink}
+              className="gap-2"
+            >
+              <Copy className="size-4" />
+              Copiar
+            </Button>
+            <ThemeToggle />
+          </>
+        }
+      />
 
       <BuscarConsultasSidebar
         setSelectedConsultas={setSelectedConsultas}
