@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "./components/Navbar";
+import { NotFoundView } from "./components/NotFoundView";
 import { Button } from "./components/ui/button";
 import { ThemeToggle } from "./components/ui/ThemeToggle";
 import { useParams } from "react-router";
@@ -18,22 +19,41 @@ function ScheduleConsultas() {
   const { fetchMateriaByName } = useMaterias();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedConsultas, setSelectedConsultas] = useState<Consulta[]>([]);
+  const [notFound, setNotFound] = useState(false);
+
+  const isValidModo =
+    params.modo === "materia" || params.modo === "profesor";
+  const hasParams = params.modo && params.nombre;
 
   useEffect(() => {
-    if (!params.modo || !params.nombre) return;
+    if (!hasParams) {
+      setNotFound(false);
+      return;
+    }
+
+    if (!isValidModo) {
+      setNotFound(true);
+      return;
+    }
+
+    setNotFound(false);
 
     const loadFromUrl = async () => {
       if (params.modo === "materia") {
         const nombre = decodeURIComponent(params.nombre ?? "");
         const materia = await fetchMateriaByName(nombre);
-        if (materia) fetchConsultas("byMateria", null, materia.id);
+        if (!materia) {
+          setNotFound(true);
+          return;
+        }
+        fetchConsultas("byMateria", null, materia.id);
       } else if (params.modo === "profesor") {
         const profesor = decodeURIComponent(params.nombre ?? "");
         fetchConsultas("byProfesor", profesor, null);
       }
     };
     loadFromUrl();
-  }, [params.modo, params.nombre, fetchConsultas, fetchMateriaByName]);
+  }, [params.modo, params.nombre, hasParams, isValidModo, fetchConsultas, fetchMateriaByName]);
 
   useEffect(() => {
     if (params.modo && params.nombre) {
@@ -85,7 +105,11 @@ function ScheduleConsultas() {
         <div className="flex-1 min-h-0 flex flex-row gap-0 overflow-hidden w-full">
           <div className="schedule-scroll flex-1 flex flex-col relative min-h-0 overflow-y-auto overflow-x-auto touch-pan-y">
             <div className="flex-1 px-4 pt-4 md:px-0 md:pt-0">
-              <WeeklyConsultas selectedConsultas={selectedConsultas} />
+              {notFound ? (
+                <NotFoundView />
+              ) : (
+                <WeeklyConsultas selectedConsultas={selectedConsultas} />
+              )}
             </div>
 
             <div className="fixed bottom-0 z-10 w-full border-t border-border"></div>
