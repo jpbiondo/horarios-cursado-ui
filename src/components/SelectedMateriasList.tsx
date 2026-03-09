@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Trash, X } from "lucide-react";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
-import { getMateriaColor, MATERIA_COLOR_CLASSES } from "../lib/utils";
+import { getMateriaColor, EVENT_COLOR_CLASSES } from "../lib/utils";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
@@ -66,7 +66,7 @@ export default function SelectedMateriasList({
                   materia.materiaNombre,
                   materia.comisionNombre,
                 );
-                const colorClass = MATERIA_COLOR_CLASSES[colorKey] ?? "";
+                const colorClass = EVENT_COLOR_CLASSES[colorKey] ?? "";
                 return (
                   <Badge
                     key={`${materia.comisionNombre}-${materia.materiaNombre}`}

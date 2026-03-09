@@ -11,6 +11,7 @@ import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Consulta } from "@/types/Consulta";
 
 export const getHours = ({
   startHour,
@@ -42,7 +43,7 @@ export const getDifferenceInHours = (startTime: string, endTime: string) => {
   return differenceInMinutes(end, start) / 60;
 };
 
-const MATERIA_COLOR_PALETTE = [
+const EVENT_COLOR_PALLETE = [
   "blue",
   "red",
   "green",
@@ -55,7 +56,7 @@ const MATERIA_COLOR_PALETTE = [
   "emerald",
 ] as const;
 
-export const MATERIA_COLOR_CLASSES: Record<string, string> = {
+export const EVENT_COLOR_CLASSES: Record<string, string> = {
   blue: "bg-blue-500/25 border-blue-500 text-blue-900 dark:text-blue-100",
   red: "bg-red-500/25 border-red-500 text-red-900 dark:text-red-100",
   green: "bg-green-500/25 border-green-500 text-green-900 dark:text-green-100",
@@ -70,6 +71,27 @@ export const MATERIA_COLOR_CLASSES: Record<string, string> = {
     "bg-indigo-500/25 border-indigo-500 text-indigo-900 dark:text-indigo-100",
   emerald:
     "bg-emerald-500/25 border-emerald-500 text-emerald-900 dark:text-emerald-100",
+};
+
+export const buildEventsColorMap = (keys: string[]): Map<string, string> => {
+  const seen = new Set<string>();
+  const orderedKeys: string[] = [];
+  for (const key of keys) {
+    if (!seen.has(key)) {
+      seen.add(key);
+      orderedKeys.push(key);
+    }
+  }
+  orderedKeys.sort();
+
+  const map = new Map<string, string>();
+  for (let i = 0; i < orderedKeys.length; i++) {
+    map.set(
+      orderedKeys[i],
+      EVENT_COLOR_PALLETE[i % EVENT_COLOR_PALLETE.length],
+    );
+  }
+  return map;
 };
 
 export const buildMateriaColorMap = (
@@ -90,10 +112,14 @@ export const buildMateriaColorMap = (
   for (let i = 0; i < orderedKeys.length; i++) {
     map.set(
       orderedKeys[i],
-      MATERIA_COLOR_PALETTE[i % MATERIA_COLOR_PALETTE.length],
+      EVENT_COLOR_PALLETE[i % EVENT_COLOR_PALLETE.length],
     );
   }
   return map;
+};
+
+const getMateriaKey = (materia: MateriaByComisionDTO) => {
+  return `${materia.materiaNombre}|${materia.comisionNombre}`;
 };
 
 export const getMateriaColor = (
@@ -101,7 +127,8 @@ export const getMateriaColor = (
   materiaNombre: string,
   comisionNombre: string,
 ): string => {
-  const colorMap = buildMateriaColorMap(materias);
+  const materiaKeys = materias.map(getMateriaKey);
+  const colorMap = buildEventsColorMap(materiaKeys);
   const key = `${materiaNombre}|${comisionNombre}`;
   return colorMap.get(key) ?? "blue";
 };
@@ -113,9 +140,8 @@ export const parseCarreraMateriasToEvents = (
   const events: CalendarEvent[] = [];
 
   for (const materia of carreraMaterias) {
-    const color =
-      colorMap.get(`${materia.materiaNombre}|${materia.comisionNombre}`) ??
-      "blue";
+    const materiaKey = getMateriaKey(materia);
+    const color = colorMap.get(materiaKey) ?? "blue";
     for (const horario of materia.horarios) {
       events.push({
         title: `${materia.materiaNombreAbrev ? materia.materiaNombreAbrev : materia.materiaNombre} ${materia.comisionNombre}`,
@@ -127,6 +153,33 @@ export const parseCarreraMateriasToEvents = (
         comisionNombre: materia.comisionNombre,
       });
     }
+  }
+
+  return events;
+};
+
+const getConsultaKey = (consulta: Consulta) => {
+  return `${consulta.materia}`;
+};
+
+export const parseConsultasToEvents = (consultas: Consulta[]) => {
+  const consultaKeys = consultas.map(getConsultaKey);
+  const colorMap = buildEventsColorMap(consultaKeys);
+  const events: CalendarEvent[] = [];
+
+  for (const consulta of consultas) {
+    const consultaKey = getConsultaKey(consulta);
+    const color = colorMap.get(consultaKey) ?? "blue";
+    events.push({
+      title: `${consulta.materia}`,
+      desc: `${consulta.profesor.nombre}`,
+      startHour: consulta.horaDesde,
+      endHour: consulta.horaHasta ?? "",
+      day: getAbreviacionDia(consulta.dia),
+      color,
+      note: (consulta.nota ?? "") + " " + (consulta.zoomUrl ?? ""),
+      contact: consulta.profesor.email,
+    });
   }
 
   return events;

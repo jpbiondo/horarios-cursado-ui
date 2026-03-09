@@ -1,14 +1,14 @@
 import { CalendarSearch } from "lucide-react";
-import { MateriaByComisionDTO } from "../../types/MateriaByComisionDTO";
-import { Button } from "./button";
+import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
+import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "./sheet";
-import BuscarMaterias from "../BuscarMaterias";
+} from "./ui/sheet";
+import BuscarMaterias from "./BuscarMaterias";
 
 interface BuscarMateriasSidebarProps {
   selectedMaterias: MateriaByComisionDTO[];

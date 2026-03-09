@@ -72,7 +72,13 @@ export default function BuscarMaterias({
     fetchComisiones,
     error: comisionesError,
   } = useComisiones();
-  const { materias, fetchMaterias, error: materiasError } = useMaterias();
+
+  const {
+    materias,
+    fetchMateriasByPlanId,
+    error: materiasError,
+  } = useMaterias();
+
   const {
     carreraMaterias,
     fetchCarreraMaterias,
@@ -92,7 +98,7 @@ export default function BuscarMaterias({
 
   useEffect(() => {
     fetchCarreras();
-  }, []);
+  }, [fetchCarreras]);
 
   useEffect(() => {
     if (!carreraMaterias) return;
@@ -116,7 +122,7 @@ export default function BuscarMaterias({
       return;
     }
 
-    fetchMaterias(selectedPlanId);
+    fetchMateriasByPlanId(selectedPlanId);
   };
 
   const handleValueChangeComision = (comisionValue: string) => {
@@ -205,7 +211,7 @@ export default function BuscarMaterias({
       return;
     }
 
-    fetchMaterias(selectedPlanId);
+    fetchMateriasByPlanId(selectedPlanId);
   };
 
   const materiaYaSeleccionada = (

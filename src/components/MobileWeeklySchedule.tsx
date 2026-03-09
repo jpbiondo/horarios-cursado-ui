@@ -2,7 +2,7 @@ import { CalendarSearch } from "lucide-react";
 import React, { useMemo } from "react";
 import { WEEKDAYS } from "../constants";
 import {
-  MATERIA_COLOR_CLASSES,
+  EVENT_COLOR_CLASSES,
   parseCarreraMateriasToEvents,
 } from "../lib/utils";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
@@ -80,7 +80,7 @@ export default function MobileWeeklySchedule({
             <div className="flex flex-col gap-2">
               {dayEvents.map((event, eventIndex) => {
                 const bgClass =
-                  MATERIA_COLOR_CLASSES[event.color] ??
+                  EVENT_COLOR_CLASSES[event.color] ??
                   "bg-neutral/20 border-neutral text-neutral-content";
 
                 const leftBorderMap: Record<string, string> = {

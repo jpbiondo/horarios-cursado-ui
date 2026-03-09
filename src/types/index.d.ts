@@ -6,6 +6,8 @@ declare interface CalendarEvent {
   day: string;
   color: string;
   comisionNombre?: string;
+  note?: string;
+  contact?: string;
 }
 
 declare interface Subject {

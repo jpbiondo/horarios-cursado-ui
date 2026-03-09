@@ -5,7 +5,7 @@ import { DAY_HOURS, WEEKDAYS } from "../constants";
 import {
   getDifferenceInHours,
   getHours,
-  MATERIA_COLOR_CLASSES,
+  EVENT_COLOR_CLASSES,
   parseCarreraMateriasToEvents,
   parseTime,
 } from "../lib/utils";
@@ -152,7 +152,7 @@ const WeeklySchedule = ({
                   const isOpen = openTooltipKey === tooltipKey;
 
                   const bgClass =
-                    MATERIA_COLOR_CLASSES[event.color] ||
+                    EVENT_COLOR_CLASSES[event.color] ||
                     "bg-neutral/20 border-neutral text-neutral-content";
                   return (
                     <Tooltip
