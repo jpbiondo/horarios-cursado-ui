@@ -4,6 +4,7 @@ import { WEEKDAYS } from "../constants";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { EVENT_COLOR_CLASSES, parseConsultasToEvents } from "../lib/utils";
 import { Badge } from "./ui/badge";
+import { Skeleton } from "./ui/skeleton";
 import { Consulta } from "@/types/Consulta";
 import {
   Dialog,
@@ -25,11 +26,13 @@ const DAY_LABELS: Record<string, string> = {
 interface MobileWeeklyScheduleProps {
   selectedConsultas?: Consulta[];
   containerRef?: React.Ref<HTMLDivElement>;
+  loading?: boolean;
 }
 
 export default function WeeklyConsultas({
   selectedConsultas,
   containerRef,
+  loading = false,
 }: MobileWeeklyScheduleProps) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent>();
   const [eventDialogOpen, setEventDialogOpen] = useState<boolean>(false);
@@ -48,7 +51,7 @@ export default function WeeklyConsultas({
     return map;
   }, [selectedConsultas]);
 
-  const isEmpty = !selectedConsultas?.length;
+  const isEmpty = !selectedConsultas?.length && !loading;
 
   const isMd = useMediaQuery("(min-width: 768px)");
   const daysToShow = isMd
@@ -59,6 +62,44 @@ export default function WeeklyConsultas({
     setSelectedEvent(event);
     setEventDialogOpen(true);
   };
+
+  if (loading) {
+    const skeletonDays = isMd ? WEEKDAYS.slice(0, -1) : ["lun", "mar", "mié"];
+    return (
+      <div
+        ref={containerRef}
+        className="flex flex-1 h-full flex-col md:flex-row gap-6 md:gap-0 pb-4"
+      >
+        {skeletonDays.map((dayKey, i) => (
+          <React.Fragment key={dayKey}>
+            <section className="flex flex-col gap-3 md:flex-1 min-w-0 md:p-3">
+              <Skeleton className="h-5 w-24 md:mx-auto" />
+              <div className="flex flex-col gap-2 flex-1">
+                {[1, 2, 3].map((j) => (
+                  <div
+                    key={j}
+                    className="flex overflow-hidden rounded-lg border border-border bg-card p-3 gap-1.5"
+                  >
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-3 w-3/4" />
+                    <Skeleton className="h-5 w-14 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </section>
+            {i < skeletonDays.length - 1 && (
+              <div
+                className="md:block w-px self-stretch shrink-0 bg-border hidden"
+                role="separator"
+                aria-orientation="vertical"
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  }
 
   if (isEmpty) {
     return (
@@ -82,7 +123,7 @@ export default function WeeklyConsultas({
   return (
     <div
       ref={containerRef}
-      className="flex flex-col md:flex-row gap-6 md:gap-0 pb-4"
+      className="flex flex-1 h-full flex-col md:flex-row gap-6 md:gap-0 pb-4"
     >
       {daysToShow.map((dayKey, i) => {
         const dayEvents = eventsByDay.get(dayKey) ?? [];
@@ -93,7 +134,7 @@ export default function WeeklyConsultas({
           <>
             <section
               key={dayKey}
-              className="flex flex-col gap-3 flex-1 min-w-0 md:p-3"
+              className="flex flex-col gap-3 md:flex-1 min-w-0 md:p-3"
             >
               <h2
                 className={`md:text-center text-base font-semibold uppercase tracking-wide text-foreground`}

@@ -15,14 +15,18 @@ import { Consulta } from "./types/Consulta";
 
 function ScheduleConsultas() {
   const params = useParams();
-  const { consultas, fetchConsultas } = useConsultasFiltered();
+  const {
+    consultas,
+    fetchConsultas,
+    loading: consultasLoading,
+  } = useConsultasFiltered();
   const { fetchMateriaByName } = useMaterias();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedConsultas, setSelectedConsultas] = useState<Consulta[]>([]);
   const [notFound, setNotFound] = useState(false);
+  const [loadingFromUrl, setLoadingFromUrl] = useState(false);
 
-  const isValidModo =
-    params.modo === "materia" || params.modo === "profesor";
+  const isValidModo = params.modo === "materia" || params.modo === "profesor";
   const hasParams = params.modo && params.nombre;
 
   useEffect(() => {
@@ -37,23 +41,39 @@ function ScheduleConsultas() {
     }
 
     setNotFound(false);
+    setLoadingFromUrl(true);
 
     const loadFromUrl = async () => {
-      if (params.modo === "materia") {
-        const nombre = decodeURIComponent(params.nombre ?? "");
-        const materia = await fetchMateriaByName(nombre);
-        if (!materia) {
-          setNotFound(true);
-          return;
+      try {
+        if (params.modo === "materia") {
+          const nombre = decodeURIComponent(params.nombre ?? "");
+          const materia = await fetchMateriaByName(nombre);
+          if (!materia) {
+            setNotFound(true);
+            return;
+          }
+          await fetchConsultas("byMateria", null, materia.id);
+        } else if (params.modo === "profesor") {
+          const profesor = decodeURIComponent(params.nombre ?? "");
+          if (!profesor) {
+            setNotFound(true);
+            return;
+          }
+          await fetchConsultas("byProfesor", profesor, null);
         }
-        fetchConsultas("byMateria", null, materia.id);
-      } else if (params.modo === "profesor") {
-        const profesor = decodeURIComponent(params.nombre ?? "");
-        fetchConsultas("byProfesor", profesor, null);
+      } finally {
+        setLoadingFromUrl(false);
       }
     };
     loadFromUrl();
-  }, [params.modo, params.nombre, hasParams, isValidModo, fetchConsultas, fetchMateriaByName]);
+  }, [
+    params.modo,
+    params.nombre,
+    hasParams,
+    isValidModo,
+    fetchConsultas,
+    fetchMateriaByName,
+  ]);
 
   useEffect(() => {
     if (params.modo && params.nombre) {
@@ -108,7 +128,10 @@ function ScheduleConsultas() {
               {notFound ? (
                 <NotFoundView />
               ) : (
-                <WeeklyConsultas selectedConsultas={selectedConsultas} />
+                <WeeklyConsultas
+                  selectedConsultas={selectedConsultas}
+                  loading={loadingFromUrl || consultasLoading}
+                />
               )}
             </div>
 
