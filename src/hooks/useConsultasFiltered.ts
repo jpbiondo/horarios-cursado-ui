@@ -1,8 +1,10 @@
 import { useCallback, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Consulta } from "@/types/Consulta";
+import { useMaterias } from "./useMaterias";
 
 export const useConsultasFiltered = () => {
+  const { fetchMateriaByName } = useMaterias();
   const [consultas, setConsultas] = useState<Consulta[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,9 +105,32 @@ export const useConsultasFiltered = () => {
     [],
   );
 
+  const fetchConsultasByMateriaNombre = useCallback(
+    async (nombre: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const materia = await fetchMateriaByName(nombre);
+        if (!materia) {
+          setError("Materia no encontrada");
+          setConsultas([]);
+          return;
+        }
+        await fetchConsultas("byMateria", null, materia.id);
+      } catch {
+        setError("Error al buscar consultas");
+        setConsultas([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchMateriaByName, fetchConsultas],
+  );
+
   return {
     consultas,
     fetchConsultas,
+    fetchConsultasByMateriaNombre,
     loading,
     error,
   };

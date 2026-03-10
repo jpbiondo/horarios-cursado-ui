@@ -158,6 +158,10 @@ export const parseCarreraMateriasToEvents = (
   return events;
 };
 
+export const getMateriaNombreFromEvent = (event: CalendarEvent) => {
+  return event.desc.split(" ").slice(0, -1).join(" ");
+};
+
 const getConsultaKey = (consulta: Consulta) => {
   return `${consulta.materia}`;
 };

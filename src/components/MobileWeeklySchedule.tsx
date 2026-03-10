@@ -1,5 +1,5 @@
 import { CalendarSearch } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { WEEKDAYS } from "../constants";
 import {
   EVENT_COLOR_CLASSES,
@@ -7,6 +7,7 @@ import {
 } from "../lib/utils";
 import { MateriaByComisionDTO } from "../types/MateriaByComisionDTO";
 import { Badge } from "./ui/badge";
+import { MateriaConsultasModal } from "./MateriaConsultasModal";
 
 const DAY_LABELS: Record<string, string> = {
   lun: "LUNES",
@@ -26,6 +27,9 @@ export default function MobileWeeklySchedule({
   selectedMaterias,
   containerRef,
 }: MobileWeeklyScheduleProps) {
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent>();
+  const [eventDialogOpen, setEventDialogOpen] = useState<boolean>(false);
+
   const eventsByDay = useMemo(() => {
     const calendarEvents = parseCarreraMateriasToEvents(selectedMaterias || []);
     const map = new Map<string, typeof calendarEvents>();
@@ -40,6 +44,11 @@ export default function MobileWeeklySchedule({
   }, [selectedMaterias]);
 
   const isEmpty = !selectedMaterias?.length;
+
+  const handleEventClick = (event: CalendarEvent) => {
+    setSelectedEvent(event);
+    setEventDialogOpen(true);
+  };
 
   if (isEmpty) {
     return (
@@ -105,8 +114,10 @@ export default function MobileWeeklySchedule({
 
                 return (
                   <div
+                    role="button"
                     key={`${dayKey}-${eventIndex}`}
-                    className={`flex overflow-hidden rounded-lg border border-border bg-card shadow-sm ${leftBorder}`}
+                    className={`flex overflow-hidden rounded-lg border border-border bg-card shadow-sm cursor-pointer ${leftBorder}`}
+                    onClick={() => handleEventClick(event)}
                   >
                     <div
                       className={`flex flex-1 flex-col gap-1.5 p-3 ${bgClass} rounded-r-lg`}
@@ -133,6 +144,11 @@ export default function MobileWeeklySchedule({
           </section>
         );
       })}
+      <MateriaConsultasModal
+        isOpen={eventDialogOpen}
+        setIsOpen={setEventDialogOpen}
+        selectedEvent={selectedEvent}
+      />
     </div>
   );
 }
