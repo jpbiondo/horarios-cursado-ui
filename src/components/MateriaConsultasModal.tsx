@@ -9,7 +9,7 @@ import {
 import { Button } from "./ui/button";
 import { getAbreviacionDia, getMateriaNombreFromEvent } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { useConsultasFiltered } from "@/hooks/useConsultasFiltered";
 
 interface MateriaConsultasModalProps {
@@ -34,6 +34,42 @@ export const MateriaConsultasModal = ({
     const materiaNombre = getMateriaNombreFromEvent(selectedEvent);
     fetchConsultasByMateriaNombre(materiaNombre);
   }, [selectedEvent, fetchConsultasByMateriaNombre]);
+
+  const sortedConsultas = useMemo(() => {
+    const dayOrder: Record<string, number> = {
+      lunes: 1,
+      martes: 2,
+      miercoles: 3,
+      miércoles: 3,
+      jueves: 4,
+      viernes: 5,
+      sabado: 6,
+      sábado: 6,
+      domingo: 7,
+    };
+
+    const getDayRank = (day: string) =>
+      dayOrder[day.trim().toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+
+    const getHourRank = (hour: string) => {
+      const [hours = "0", minutes = "0"] = hour.trim().split(":");
+      const parsedHours = Number.parseInt(hours, 10);
+      const parsedMinutes = Number.parseInt(minutes, 10);
+
+      if (Number.isNaN(parsedHours) || Number.isNaN(parsedMinutes)) {
+        return Number.MAX_SAFE_INTEGER;
+      }
+
+      return parsedHours * 60 + parsedMinutes;
+    };
+
+    return [...consultas].sort((a, b) => {
+      const byDay = getDayRank(a.dia) - getDayRank(b.dia);
+      if (byDay !== 0) return byDay;
+
+      return getHourRank(a.horaDesde) - getHourRank(b.horaDesde);
+    });
+  }, [consultas]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -66,7 +102,7 @@ export const MateriaConsultasModal = ({
               {!loadingConsultas &&
                 !errorConsultas &&
                 consultas.length !== 0 &&
-                `(mostrando 5 de ${consultas.length})`}
+                `(mostrando ${Math.min(5, consultas.length)} de ${consultas.length})`}
             </p>
             {loadingConsultas ? (
               <div className="flex flex-col gap-3 pt-2">
@@ -80,7 +116,7 @@ export const MateriaConsultasModal = ({
               <p>No se han encontrado consultas</p>
             ) : (
               <>
-                {consultas.slice(0, 5).map((consulta) => (
+                {sortedConsultas.slice(0, 5).map((consulta) => (
                   <p className="text-foreground">
                     <span className="font-medium tracking-wide">
                       ({consulta.horaDesde} - {getAbreviacionDia(consulta.dia)})
@@ -88,7 +124,9 @@ export const MateriaConsultasModal = ({
                     {consulta.profesor.nombre}
                   </p>
                 ))}
-                <p className="text-foreground">...</p>
+                {5 - consultas.length < 0 && (
+                  <p className="text-foreground">...</p>
+                )}
                 <Link
                   to={`/consultas/materia/${encodeURIComponent(
                     consultas[0]?.materia ??
