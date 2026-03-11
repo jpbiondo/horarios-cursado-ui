@@ -9,6 +9,7 @@ import {
   SheetTitle,
 } from "./ui/sheet";
 import BuscarMaterias from "./BuscarMaterias";
+import { useNavigate } from "react-router";
 
 interface BuscarMateriasSidebarProps {
   selectedMaterias: MateriaByComisionDTO[];
@@ -27,12 +28,13 @@ export default function BuscarMateriasSidebar({
   open,
   onOpenChange,
 }: BuscarMateriasSidebarProps) {
+  const navigate = useNavigate();
   return (
     <>
       <Button
         variant="default"
         size="icon-lg"
-        className="fixed bottom-2 right-2 z-30 lg:hidden h-12 w-12"
+        className="fixed bottom-2 right-2 z-20 lg:hidden h-12 w-12"
         aria-label="Buscar Materias"
         onClick={() => onOpenChange(true)}
       >
@@ -45,6 +47,17 @@ export default function BuscarMateriasSidebar({
             <SheetDescription>
               Selecciona tu carrera y comisión para consultar las materias
             </SheetDescription>
+            <div>
+              <Button
+                variant="link"
+                size="sm"
+                className="pl-0 cursor-pointer"
+                onClick={() => navigate("/consultas")}
+              >
+                <span className="text-green-500 font-bold">[NUEVO]</span> Ver
+                Consultas
+              </Button>
+            </div>
           </SheetHeader>
           <BuscarMaterias
             variant="inline"

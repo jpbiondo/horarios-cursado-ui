@@ -12,6 +12,8 @@ import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import { useProfiles } from "./hooks/useProfiles";
 import { useTheme } from "next-themes";
+import { Button } from "./components/ui/button";
+import { useNavigate } from "react-router";
 
 function ScheduleEstudiante() {
   const {
@@ -32,6 +34,7 @@ function ScheduleEstudiante() {
   const exportScheduleRefCropped = useRef<HTMLDivElement | null>(null);
   const { resolvedTheme } = useTheme();
 
+  const navigate = useNavigate();
   const hasSelectedMaterias = materiasSeleccionadas.length > 0;
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -146,6 +149,15 @@ function ScheduleEstudiante() {
               <p className="text-sm text-muted-foreground">
                 Busca materias para añadir al calendario
               </p>
+              <Button
+                variant="link"
+                size="sm"
+                className="pl-0 cursor-pointer"
+                onClick={() => navigate("/consultas")}
+              >
+                <span className="text-green-500 font-bold">[NUEVO]</span> Ver
+                Consultas
+              </Button>
             </div>
             <BuscarMaterias
               variant="inline"
