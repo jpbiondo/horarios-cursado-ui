@@ -3,6 +3,14 @@ import { useNavigate } from "react-router";
 import { Search } from "lucide-react";
 import { Button } from "./ui/button";
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "./ui/combobox";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -59,15 +67,6 @@ export default function BuscarConsultas({
     fetchMaterias();
   }, [activeTab, fetchProfesores, fetchMaterias]);
 
-  const handleValueChangeProfesor = (profesorValue: string) => {
-    const selectedProfesorNombre = profesorValue;
-    setSelectedProfesor(
-      profesores?.filter(
-        (profesor) => profesor.nombre === selectedProfesorNombre,
-      )[0],
-    );
-  };
-
   const handleValueChangeMateria = (materiaValue: string) => {
     const selectedMateriaId = Number(materiaValue);
     setSelectedMateria(
@@ -111,24 +110,28 @@ export default function BuscarConsultas({
           <TabsContent value="byProfesor">
             <div className="grid gap-3">
               <Label>Profesor</Label>
-              <Select
-                name="selectedProfesor"
-                onValueChange={handleValueChangeProfesor}
+              <Combobox
+                items={profesores ?? []}
+                value={selectedProfesor}
+                onValueChange={setSelectedProfesor}
+                itemToStringValue={(p) => p.nombre}
+                itemToStringLabel={(p) => p.nombre}
               >
-                <SelectTrigger className="w-full truncate">
-                  <SelectValue placeholder="Seleccione un profesor" />
-                </SelectTrigger>
-                <SelectContent>
-                  {profesores?.map((profesor) => (
-                    <SelectItem
-                      key={profesor.nombre}
-                      value={String(profesor.nombre)}
-                    >
-                      {profesor.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <ComboboxInput
+                  placeholder="Seleccione un profesor"
+                  className="w-full"
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>No encontrado</ComboboxEmpty>
+                  <ComboboxList>
+                    {(profesor) => (
+                      <ComboboxItem key={profesor.nombre} value={profesor}>
+                        {profesor.nombre}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </div>
           </TabsContent>
           <TabsContent value="byMateria">

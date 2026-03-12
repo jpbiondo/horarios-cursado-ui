@@ -11,6 +11,10 @@ body,
   overscroll-behavior: none;
 }
 
+body[data-scroll-locked] {
+  pointer-events: auto !important;
+}
+
 /* 100dvh = dynamic viewport height (fixes iOS address bar); 100vh fallback */
 .app-root {
   height: 100vh;
